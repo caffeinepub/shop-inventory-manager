@@ -1,11 +1,10 @@
 import Map "mo:core/Map";
-import Text "mo:core/Text";
-import Runtime "mo:core/Runtime";
-import Float "mo:core/Float";
-import Time "mo:core/Time";
 import List "mo:core/List";
+import Text "mo:core/Text";
+import Time "mo:core/Time";
+import Float "mo:core/Float";
 import Nat "mo:core/Nat";
-import Int "mo:core/Int";
+import Array "mo:core/Array";
 
 actor {
   type Product = {
@@ -21,6 +20,22 @@ actor {
     timestamp : Time.Time;
   };
 
+  type ZReportProduct = {
+    productName : Text;
+    quantitySold : Nat;
+    sellingPrice : Float;
+    purchasePrice : Float;
+    revenue : Float;
+    profit : Float;
+  };
+
+  type ZReport = {
+    products : [ZReportProduct];
+    totalRevenue : Float;
+    totalProfit : Float;
+    totalQuantity : Nat;
+  };
+
   let products = Map.fromIter<Text, Product>([
     ("Marlboro Silver", { name = "Marlboro Silver"; quantity = 0; lastPurchasePrice = 0.0 }),
     ("Marlboro Gold", { name = "Marlboro Gold"; quantity = 0; lastPurchasePrice = 0.0 }),
@@ -31,8 +46,10 @@ actor {
 
   let sales = List.empty<Sale>();
 
-  public shared ({ caller }) func addStock(productName : Text, quantity : Nat, purchasePrice : Float) : async () {
-    if (quantity <= 0) { Runtime.trap("Quantity must be positive") };
+  public shared ({ caller }) func addStock(productName : Text, quantity : Nat, purchasePrice : Float) : async Bool {
+    if (quantity == 0) {
+      return false;
+    };
 
     switch (products.get(productName)) {
       case (?product) {
@@ -42,20 +59,23 @@ actor {
           lastPurchasePrice = purchasePrice;
         };
         products.add(productName, updatedProduct);
+        true;
       };
       case (null) {
-        Runtime.trap("Product does not exist");
+        false;
       };
     };
   };
 
-  public shared ({ caller }) func recordSale(productName : Text, quantitySold : Nat, sellingPrice : Float, timestamp : Time.Time) : async () {
-    if (quantitySold <= 0) { Runtime.trap("Quantity sold must be positive") };
+  public shared ({ caller }) func recordSale(productName : Text, quantitySold : Nat, sellingPrice : Float, timestamp : Time.Time) : async Bool {
+    if (quantitySold == 0) {
+      return false;
+    };
 
     switch (products.get(productName)) {
       case (?product) {
-        if (product.quantity < quantitySold) {
-          Runtime.trap("Insufficient stock");
+        if (quantitySold > product.quantity) {
+          return false;
         };
 
         let updatedProduct : Product = {
@@ -72,66 +92,139 @@ actor {
           timestamp;
         };
         sales.add(newSale);
+        true;
       };
       case (null) {
-        Runtime.trap("Product does not exist");
+        false;
       };
     };
   };
 
-  func isToday(timestamp : Time.Time) : Bool {
-    let now = Time.now();
-    let secondsInDay : Int = 86400;
-    let daysSinceEpoch = now / (secondsInDay * 1_000_000_000);
-    let saleDaysSinceEpoch = timestamp / (secondsInDay * 1_000_000_000);
-    daysSinceEpoch == saleDaysSinceEpoch;
+  public query ({ caller }) func getStockLevels() : async [(Text, Nat)] {
+    let stockList = List.empty<(Text, Nat)>();
+    for ((productName, product) in products.entries()) {
+      stockList.add((productName, product.quantity));
+    };
+    stockList.toArray();
   };
 
-  public query ({ caller }) func getTodaySales() : async [(Text, Nat, Float)] {
-    let todaySalesMap = Map.empty<Text, (Nat, Float)>();
+  public query ({ caller }) func getSalesHistory() : async [(Text, Nat, Float, Time.Time)] {
+    let salesArray = sales.toArray();
+    let salesHistory = List.empty<(Text, Nat, Float, Time.Time)>();
 
-    for (sale in sales.values()) {
-      if (isToday(sale.timestamp)) {
-        switch (todaySalesMap.get(sale.productName)) {
-          case (? (quantity, revenue)) {
-            todaySalesMap.add(
-              sale.productName,
-              (
-                quantity + sale.quantitySold,
-                revenue + (sale.quantitySold.toFloat() * sale.sellingPrice),
-              ),
-            );
+    for (sale in salesArray.values()) {
+      salesHistory.add(
+        (
+          sale.productName,
+          sale.quantitySold,
+          sale.sellingPrice,
+          sale.timestamp,
+        )
+      );
+    };
+
+    salesHistory.toArray();
+  };
+
+  public query ({ caller }) func getZReport() : async ZReport {
+    let today = Time.now();
+
+    let dailySales = sales.toArray().filter(
+      func(sale) {
+        let saleDay = sale.timestamp / (24 * 60 * 60 * 1_000_000_000);
+        let currentDay = today / (24 * 60 * 60 * 1_000_000_000);
+        saleDay == currentDay;
+      }
+    );
+
+    let productMap = Map.empty<Text, (Nat, Float, Float)>();
+
+    // Aggregate sales data per product
+    let aggregatedSales = dailySales.foldRight(
+      productMap,
+      func(sale, acc) {
+        let previous = acc.get(sale.productName);
+        let updated = switch (previous) {
+          case (? (qty, price, totalRevenue)) {
+            (qty + sale.quantitySold, price, totalRevenue + sale.quantitySold.toFloat() * sale.sellingPrice);
           };
           case (null) {
-            todaySalesMap.add(
-              sale.productName,
-              (
-                sale.quantitySold,
-                sale.quantitySold.toFloat() * sale.sellingPrice,
-              ),
-            );
+            (sale.quantitySold, sale.sellingPrice, sale.quantitySold.toFloat() * sale.sellingPrice);
           };
         };
-      };
-    };
+        acc.add(sale.productName, updated);
+        acc;
+      },
+    );
 
-    let result = List.empty<(Text, Nat, Float)>();
-    for (entry in todaySalesMap.entries()) {
-      let (productName, (quantity, revenue)) = entry;
-      result.add((productName, quantity, revenue));
+    // Map aggregated sales to ZReportProduct array
+    let zReportProducts = aggregatedSales.entries().toArray().map(
+      func((productName, (quantitySold, sellingPrice, _))) {
+        let purchasePrice = switch (products.get(productName)) {
+          case (?product) { product.lastPurchasePrice };
+          case (null) { 0.0 };
+        };
+
+        let revenue = quantitySold.toFloat() * sellingPrice;
+        let profit = quantitySold.toFloat() * (sellingPrice - purchasePrice);
+
+        {
+          productName;
+          quantitySold;
+          sellingPrice;
+          purchasePrice;
+          revenue;
+          profit;
+        };
+      }
+    );
+
+    let (totalRevenue, totalProfit, totalQuantity) = zReportProducts.foldLeft(
+      (0.0, 0.0, 0),
+      func(acc, zProduct) {
+        let (sumRevenue, sumProfit, sumQuantity) = acc;
+        (sumRevenue + zProduct.revenue, sumProfit + zProduct.profit, sumQuantity + zProduct.quantitySold);
+      },
+    );
+
+    {
+      products = zReportProducts;
+      totalRevenue;
+      totalProfit;
+      totalQuantity;
     };
-    result.toArray();
   };
 
-  public shared ({ caller }) func resetStocks() : async () {
-    for (entry in products.entries()) {
-      let (productName, product) = entry;
-      let updatedProduct : Product = {
-        name = product.name;
-        quantity = 0;
-        lastPurchasePrice = product.lastPurchasePrice;
+  public shared ({ caller }) func addProduct(productName : Text) : async Bool {
+    switch (products.get(productName)) {
+      case (?_) { false };
+      case (null) {
+        let newProduct : Product = {
+          name = productName;
+          quantity = 0;
+          lastPurchasePrice = 0.0;
+        };
+        products.add(productName, newProduct);
+        true;
       };
-      products.add(productName, updatedProduct);
+    };
+  };
+
+  public shared ({ caller }) func deleteProduct(productName : Text) : async Bool {
+    switch (products.get(productName)) {
+      case (?_) {
+        products.remove(productName);
+
+        let filteredSales = sales.reverse().filter(
+          func(sale) { sale.productName != productName }
+        );
+        sales.clear();
+        let filteredSalesArray = filteredSales.toArray();
+        let reversedFilteredSales = List.fromArray<Sale>(filteredSalesArray.reverse());
+        sales.addAll(reversedFilteredSales.values());
+        true;
+      };
+      case (null) { false };
     };
   };
 };

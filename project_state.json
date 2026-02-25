@@ -1,16 +1,23 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 3,
-  "summary": "A simple, mobile-first inventory management web app for a small shop (POS-style). Features predefined cigarette products (Marlboro Silver, Marlboro Gold, Parliament Silver, Parliament Platinium, Parliament Superslim), add stock flow, record sale flow, password-protected inventory view and daily sales report, admin reset, and persistent local storage. UI is button-based with minimal typing, dark/light modern style.",
+  "projectStateVersion": 11,
+  "summary": "A simple, mobile-first inventory management web app for a small shop (POS-style), targeting Android and iOS. UI is fully in Azerbaijani language. Features predefined cigarette products (Marlboro Silver, Marlboro Gold, Parliament Silver, Parliament Platinium, Parliament Superslim), add stock flow, record sale flow, password-protected inventory view and daily sales report, admin reset, and persistent local storage. Inventory view shows live remaining stock quantities. UI is button-based with minimal typing, dark/light modern style. Daily sales report now shows quantity sold per product, selling price, profit (sell - buy price), total daily revenue, total daily profit, and total quantity sold. A product management section allows adding custom products, which persist in all menus, and deleting products to remove them from inventory and menus.",
   "architectural_notes": [
     "Mobile-first, button-based UI with minimal typing — large tap targets suitable for shop workers",
     "Predefined products: Marlboro Silver, Marlboro Gold, Parliament Silver, Parliament Platinium, Parliament Superslim",
     "Single shared password 'gulserxan' for Inventory View, Daily Sales Report, and Admin Reset",
-    "Persistent storage via localStorage or lightweight backend; data must survive restarts"
+    "Persistent storage via localStorage or lightweight backend; data must survive restarts",
+    "All UI labels, buttons, messages, and prompts must be in Azerbaijani language",
+    "App must be optimized for Android and iOS mobile browsers (viewport meta, touch targets, scroll behavior)",
+    "Products are dynamic — users can add/delete products; all menus and inventory must reflect changes in real-time"
   ],
-  "known_issues": [],
-  "isFixRequest": false,
-  "imageRequirements": "## Required Images\n- Shop/retail app logo icon — a simple stylized cash register or shop bag silhouette on a dark background, warm amber accent (shop-logo.dim_256x256.png)",
+  "known_issues": [
+    "Add Stock flow throws an error when attempting to add stock",
+    "Stock quantities display as 0 instead of actual values",
+    "Record Sale flow throws an error when attempting to record a sale",
+    "Daily sales report does not show selling price, profit per product, total daily profit, or total quantity sold"
+  ],
+  "isFixRequest": true,
   "existing_features": [
     {
       "id": "feature-build-the-main-dashboard-home-screen-with-5-large-tappable-buttons-add-stock-record-sale-view-inventory-daily-sales-report-reset-inventory-the-dashboard-must-be-mobile-first-with-full-width-buttons-easy-to-tap-with-a-thumb",
@@ -65,6 +72,126 @@
       "title": "Apply a clean, modern dark-themed visual design across all screens. Use a dark background (near-black or very dark gray) with high-contrast white or light-gray text. Accent color should be a warm amber/orange tone to evoke a shop/retail feel. All buttons must be large, with generous padding and rounded corners. Typography must be large and legible. The layout must be mobile-first (single-column, full-width elements) with a consistent header showing the app name and a back button on sub-screens.",
       "reqIds": [
         "REQ-12"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-translate-all-user-facing-ui-text-across-every-screen-and-flow-to-azerbaijani-language-this-includes-dashboard-button-labels-e-g-stok-lav-et-sat-qeydiyyat-anbara-bax-g-nl-k-sat-hesabat-anbar-s-f-rla-all-step-labels-and-instructions-in-the-add-stock-and-record-sale-flows-password-prompt-text-error-and-success-messages-inventory-list-headers-daily-sales-report-labels-reset-confirmation-dialog-text-and-the-app-header-title",
+      "title": "Translate all user-facing UI text across every screen and flow to Azerbaijani language. This includes: dashboard button labels (e.g., 'Stok Əlavə Et', 'Satış Qeydiyyatı', 'Anbara Bax', 'Günlük Satış Hesabatı', 'Anbarı Sıfırla'), all step labels and instructions in the Add Stock and Record Sale flows, password prompt text, error and success messages, inventory list headers, daily sales report labels, reset confirmation dialog text, and the app header/title.",
+      "reqIds": [
+        "REQ-13"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-optimize-the-app-layout-and-interactions-for-android-and-ios-mobile-devices-ensure-all-touch-targets-are-at-least-48-48px-buttons-have-generous-tap-areas-the-viewport-meta-tag-is-correctly-set-for-mobile-width-device-width-initial-scale-1-no-scaling-scrolling-is-smooth-and-native-feeling-inputs-do-not-trigger-unintended-zoom-on-focus-font-size-16px-on-inputs-and-the-overall-single-column-layout-fills-the-screen-naturally-on-small-screen-devices",
+      "title": "Optimize the app layout and interactions for Android and iOS mobile devices. Ensure all touch targets are at least 48×48px, buttons have generous tap areas, the viewport meta tag is correctly set for mobile (width=device-width, initial-scale=1, no scaling), scrolling is smooth and native-feeling, inputs do not trigger unintended zoom on focus (font-size ≥ 16px on inputs), and the overall single-column layout fills the screen naturally on small-screen devices.",
+      "reqIds": [
+        "REQ-14"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-on-the-password-protected-inventory-view-screen-display-the-live-remaining-stock-quantity-for-each-product-fetched-from-the-new-getstocklevels-backend-query-each-product-row-must-show-the-product-name-and-its-current-stock-count-in-azerbaijani-e-g-qal-q-45-add-a-react-query-hook-for-getstocklevels-and-use-it-in-the-viewinventory-page",
+      "title": "On the password-protected Inventory View screen, display the live remaining stock quantity for each product (fetched from the new getStockLevels backend query). Each product row must show the product name and its current stock count in Azerbaijani (e.g., 'Qalıq: 45'). Add a React Query hook for getStockLevels and use it in the ViewInventory page.",
+      "reqIds": [
+        "REQ-16"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-in-the-record-sale-flow-recordsale-tsx-on-the-selling-price-step-step-3-add-a-manual-numeric-input-field-that-allows-the-user-to-type-a-custom-selling-price-in-azn-in-addition-to-the-existing-preset-price-buttons-9-10-11-12-azn-the-input-must-have-font-size-16px-to-prevent-zoom-on-mobile-the-manually-entered-value-should-override-any-selected-preset-button-and-the-selected-preset-button-should-populate-the-input-field-the-confirm-button-should-use-whichever-value-is-active-preset-or-manual-label-the-input-field-in-azerbaijani-e-g-qiym-t-azn",
+      "title": "In the Record Sale flow (RecordSale.tsx), on the selling price step (Step 3), add a manual numeric input field that allows the user to type a custom selling price in AZN, in addition to the existing preset price buttons (9, 10, 11, 12 AZN). The input must have font-size ≥ 16px to prevent zoom on mobile. The manually entered value should override any selected preset button, and the selected preset button should populate the input field. The Confirm button should use whichever value is active (preset or manual). Label the input field in Azerbaijani (e.g., 'Qiymət (AZN)').",
+      "reqIds": [
+        "REQ-17"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-diagnose-and-fix-the-backend-add-stock-function-so-that-calling-it-from-the-frontend-no-longer-throws-an-error-verify-that-the-motoko-actor-s-addstock-function-correctly-accepts-product-name-quantity-and-purchase-price-updates-stable-storage-and-returns-a-success-result-ensure-the-candid-interface-matches-what-the-frontend-calls",
+      "title": "Diagnose and fix the backend Add Stock function so that calling it from the frontend no longer throws an error. Verify that the Motoko actor's addStock function correctly accepts product name, quantity, and purchase price, updates stable storage, and returns a success result. Ensure the Candid interface matches what the frontend calls.",
+      "reqIds": [
+        "REQ-18"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-diagnose-and-fix-the-backend-record-sale-function-so-that-calling-it-from-the-frontend-no-longer-throws-an-error-verify-that-the-motoko-actor-s-recordsale-function-correctly-accepts-product-name-quantity-selling-price-and-timestamp-decrements-stock-saves-the-sale-record-to-stable-storage-and-returns-a-success-or-insufficient-stock-result-ensure-the-candid-interface-matches-what-the-frontend-calls",
+      "title": "Diagnose and fix the backend Record Sale function so that calling it from the frontend no longer throws an error. Verify that the Motoko actor's recordSale function correctly accepts product name, quantity, selling price, and timestamp, decrements stock, saves the sale record to stable storage, and returns a success or insufficient-stock result. Ensure the Candid interface matches what the frontend calls.",
+      "reqIds": [
+        "REQ-19"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-fix-the-stock-quantity-display-issue-where-all-products-show-0-instead-of-their-actual-current-stock-values-the-getstocklevels-backend-query-must-correctly-read-from-stable-storage-and-return-real-quantities-the-viewinventory-page-and-any-other-screen-using-stock-levels-must-correctly-parse-and-display-the-returned-values",
+      "title": "Fix the stock quantity display issue where all products show 0 instead of their actual current stock values. The getStockLevels backend query must correctly read from stable storage and return real quantities. The ViewInventory page and any other screen using stock levels must correctly parse and display the returned values.",
+      "reqIds": [
+        "REQ-20"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-a-new-sales-history-page-saleshistory-tsx-accessible-from-the-dashboard-the-page-must-be-password-protected-password-gulserxan-after-authentication-display-a-filterable-list-of-all-sales-records-fetched-via-the-getsaleshistory-query-hook-provide-two-filters-1-a-product-filter-a-row-of-product-name-buttons-or-a-dropdown-to-filter-by-a-specific-product-or-show-all-2-a-date-time-range-filter-date-pickers-or-preset-buttons-today-this-week-all-time-to-filter-records-by-timestamp-display-each-record-showing-product-name-quantity-sold-selling-price-and-date-time-all-labels-must-be-in-azerbaijani-e-g-sat-tarix-si-m-hsul-tarix-miqdar-qiym-t",
+      "title": "Create a new Sales History page (SalesHistory.tsx) accessible from the dashboard. The page must be password-protected (password: 'gulserxan'). After authentication, display a filterable list of all sales records fetched via the getSalesHistory query hook. Provide two filters: (1) a product filter — a row of product name buttons or a dropdown to filter by a specific product or show all; (2) a date/time range filter — date pickers or preset buttons (Today, This Week, All Time) to filter records by timestamp. Display each record showing product name, quantity sold, selling price, and date/time. All labels must be in Azerbaijani (e.g., 'Satış Tarixçəsi', 'Məhsul', 'Tarix', 'Miqdar', 'Qiymət').",
+      "reqIds": [
+        "REQ-22"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-z-report-button-to-the-daily-sales-report-screen-dailysalesreport-tsx-when-tapped-it-fetches-the-z-report-data-via-the-getzreport-query-formats-it-as-a-plain-text-summary-in-azerbaijani-including-app-name-date-per-product-breakdown-with-units-and-revenue-and-total-revenue-and-opens-whatsapp-sharing-using-a-https-wa-me-text-url-with-the-url-encoded-report-text-the-button-must-be-labeled-in-azerbaijani-e-g-z-hesabat-whatsapp-il-payla-and-styled-with-the-amber-accent-color",
+      "title": "Add a Z-Report button to the Daily Sales Report screen (DailySalesReport.tsx). When tapped, it fetches the Z-report data via the getZReport query, formats it as a plain-text summary in Azerbaijani (including app name, date, per-product breakdown with units and revenue, and total revenue), and opens WhatsApp sharing using a 'https://wa.me/?text=...' URL with the URL-encoded report text. The button must be labeled in Azerbaijani (e.g., 'Z Hesabatı WhatsApp ilə Paylaş') and styled with the amber accent color.",
+      "reqIds": [
+        "REQ-24"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-dailysalesreport-tsx-to-display-the-enriched-report-data-returned-by-getzreport-for-each-product-sold-today-show-product-name-quantity-sold-selling-price-azn-purchase-price-azn-revenue-azn-and-profit-azn-below-the-per-product-list-show-summary-totals-total-quantity-sold-total-daily-revenue-and-total-daily-profit-all-labels-in-english",
+      "title": "Update DailySalesReport.tsx to display the enriched report data returned by getZReport. For each product sold today, show: product name, quantity sold, selling price (AZN), purchase price (AZN), revenue (AZN), and profit (AZN). Below the per-product list, show summary totals: Total Quantity Sold, Total Daily Revenue, and Total Daily Profit. All labels in English.",
+      "reqIds": [
+        "REQ-26"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-react-query-mutation-hooks-useaddproduct-and-usedeleteproduct-in-usequeries-ts-that-call-the-backend-addproduct-and-deleteproduct-functions-respectively-on-success-invalidate-all-relevant-queries-stock-levels-sales-history-z-report",
+      "title": "Add React Query mutation hooks useAddProduct and useDeleteProduct in useQueries.ts that call the backend addProduct and deleteProduct functions respectively. On success, invalidate all relevant queries (stock levels, sales history, Z-report).",
+      "reqIds": [
+        "REQ-28"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-a-new-product-management-page-productmanagement-tsx-accessible-from-the-dashboard-via-a-new-manage-products-button-the-page-must-be-password-protected-password-gulserxan-after-authentication-display-1-a-text-input-field-and-an-add-product-button-to-add-a-new-product-by-name-2-a-list-of-all-current-products-fetched-via-getstocklevels-each-with-a-delete-trash-button-confirm-deletion-with-an-inline-confirmation-prompt-before-calling-deleteproduct-show-success-and-error-feedback-for-both-add-and-delete-actions-all-labels-in-english",
+      "title": "Create a new Product Management page (ProductManagement.tsx) accessible from the Dashboard via a new 'Manage Products' button. The page must be password-protected (password: 'gulserxan'). After authentication, display: (1) a text input field and an 'Add Product' button to add a new product by name; (2) a list of all current products (fetched via getStockLevels) each with a delete (trash) button. Confirm deletion with an inline confirmation prompt before calling deleteProduct. Show success and error feedback for both add and delete actions. All labels in English.",
+      "reqIds": [
+        "REQ-29"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-dashboard-dashboard-tsx-to-include-a-new-manage-products-navigation-button-that-routes-to-the-productmanagement-page-the-button-must-follow-the-same-full-width-large-mobile-first-styling-as-existing-dashboard-buttons",
+      "title": "Update the Dashboard (Dashboard.tsx) to include a new 'Manage Products' navigation button that routes to the ProductManagement page. The button must follow the same full-width, large, mobile-first styling as existing dashboard buttons.",
+      "reqIds": [
+        "REQ-30"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-app-tsx-to-register-a-route-for-the-productmanagement-page-e-g-product-management",
+      "title": "Update App.tsx to register a route for the ProductManagement page (e.g., /product-management).",
+      "reqIds": [
+        "REQ-31"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-ensure-the-addstock-recordsale-viewinventory-saleshistory-and-dailysalesreport-pages-dynamically-fetch-the-current-product-list-via-getstocklevels-and-render-product-selection-buttons-for-all-products-currently-in-stable-storage-including-newly-added-products-and-excluding-deleted-ones-remove-any-hardcoded-product-name-arrays-from-these-pages",
+      "title": "Ensure the AddStock, RecordSale, ViewInventory, SalesHistory, and DailySalesReport pages dynamically fetch the current product list (via getStockLevels) and render product selection buttons for all products currently in stable storage — including newly added products and excluding deleted ones. Remove any hardcoded product name arrays from these pages.",
+      "reqIds": [
+        "REQ-32"
       ],
       "version": 1
     }
@@ -149,6 +276,102 @@
       "summary": "Implement an Admin Reset backend function: resets all product stock quantities to zero. This function must be callable only after password validation on the frontend (password: gulserxan).",
       "reqIds": [
         "REQ-5"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-13",
+      "summary": "Translate all UI text to Azerbaijani language across all screens and flows",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-14",
+      "summary": "Optimize app layout and interactions for Android and iOS mobile devices (touch targets, viewport, native-feel UX)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-15",
+      "summary": "Show live remaining stock quantity per product on the dashboard or inventory screen (real-time stock count visible without entering password-protected view)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-18",
+      "summary": "Add a backend query function that returns the current stock quantity for each product (name + remaining stock integer). This function should read from the stable products map and return all 5 products with their live stock counts.",
+      "reqIds": [
+        "REQ-15"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-19",
+      "summary": "In the Record Sale flow, add a manual price input field so the user can type a custom selling price instead of only choosing from preset buttons (9/10/11/12 AZN)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-20",
+      "summary": "Add sales history filter by product and by date/time range in the Daily Sales Report screen",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-21",
+      "summary": "Add Z-report (end-of-day summary) generation with ability to share via WhatsApp",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-25",
+      "summary": "Add a backend query function getSalesHistory that returns all sale records stored in stable storage, each record including: product name, quantity sold, selling price (AZN), and timestamp (Unix nanoseconds or Int). This function will power the new sales history report screen.",
+      "reqIds": [
+        "REQ-21"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-27",
+      "summary": "Add a backend query function getZReport that returns an end-of-day (Z-report) summary for today: total revenue across all products, total units sold, and a per-product breakdown (product name, units sold, revenue). This mirrors the daily sales report but is formatted for export.",
+      "reqIds": [
+        "REQ-23"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-28",
+      "summary": "Improve daily sales report: show quantity sold per product, selling price, profit (sell price - buy price), total daily revenue, total daily profit, and total quantity sold",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-29",
+      "summary": "Add product management section: manually add new products that appear permanently in all menus, and delete products to remove them from inventory and all menus",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-30",
+      "summary": "Extend the backend getZReport (and any daily sales query) to return, for each product sold today: product name, quantity sold, selling price, purchase price (last known buy price), revenue (quantity × selling price), and profit (quantity × (selling price - purchase price)). Also return totals: total daily revenue, total daily profit, and total quantity sold across all products.",
+      "reqIds": [
+        "REQ-25"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-32",
+      "summary": "Add backend functions for product management: (1) addProduct(name: Text) — adds a new product with zero stock and zero purchase price to the stable products map, returning an error if the name already exists; (2) deleteProduct(name: Text) — removes the product from the stable products map and removes all associated sale records from the stable sales list, returning an error if the product does not exist.",
+      "reqIds": [
+        "REQ-27"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-38",
+      "summary": "Generate a migration module (migration.mo) that preserves all existing stable data (products map and sales list) when upgrading the canister to the new version that adds the addProduct and deleteProduct functions.",
+      "reqIds": [
+        "REQ-33"
       ],
       "status": "pending"
     }

@@ -90,15 +90,46 @@ export class ExternalBlob {
     }
 }
 export type Time = bigint;
+export interface ZReport {
+    totalProfit: number;
+    totalRevenue: number;
+    products: Array<ZReportProduct>;
+    totalQuantity: bigint;
+}
+export interface ZReportProduct {
+    purchasePrice: number;
+    revenue: number;
+    sellingPrice: number;
+    productName: string;
+    quantitySold: bigint;
+    profit: number;
+}
 export interface backendInterface {
-    addStock(productName: string, quantity: bigint, purchasePrice: number): Promise<void>;
-    getTodaySales(): Promise<Array<[string, bigint, number]>>;
-    recordSale(productName: string, quantitySold: bigint, sellingPrice: number, timestamp: Time): Promise<void>;
-    resetStocks(): Promise<void>;
+    addProduct(productName: string): Promise<boolean>;
+    addStock(productName: string, quantity: bigint, purchasePrice: number): Promise<boolean>;
+    deleteProduct(productName: string): Promise<boolean>;
+    getSalesHistory(): Promise<Array<[string, bigint, number, Time]>>;
+    getStockLevels(): Promise<Array<[string, bigint]>>;
+    getZReport(): Promise<ZReport>;
+    recordSale(productName: string, quantitySold: bigint, sellingPrice: number, timestamp: Time): Promise<boolean>;
 }
 export class Backend implements backendInterface {
     constructor(private actor: ActorSubclass<_SERVICE>, private _uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, private _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, private processError?: (error: unknown) => never){}
-    async addStock(arg0: string, arg1: bigint, arg2: number): Promise<void> {
+    async addProduct(arg0: string): Promise<boolean> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.addProduct(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.addProduct(arg0);
+            return result;
+        }
+    }
+    async addStock(arg0: string, arg1: bigint, arg2: number): Promise<boolean> {
         if (this.processError) {
             try {
                 const result = await this.actor.addStock(arg0, arg1, arg2);
@@ -112,21 +143,63 @@ export class Backend implements backendInterface {
             return result;
         }
     }
-    async getTodaySales(): Promise<Array<[string, bigint, number]>> {
+    async deleteProduct(arg0: string): Promise<boolean> {
         if (this.processError) {
             try {
-                const result = await this.actor.getTodaySales();
+                const result = await this.actor.deleteProduct(arg0);
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.getTodaySales();
+            const result = await this.actor.deleteProduct(arg0);
             return result;
         }
     }
-    async recordSale(arg0: string, arg1: bigint, arg2: number, arg3: Time): Promise<void> {
+    async getSalesHistory(): Promise<Array<[string, bigint, number, Time]>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getSalesHistory();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getSalesHistory();
+            return result;
+        }
+    }
+    async getStockLevels(): Promise<Array<[string, bigint]>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getStockLevels();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getStockLevels();
+            return result;
+        }
+    }
+    async getZReport(): Promise<ZReport> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getZReport();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getZReport();
+            return result;
+        }
+    }
+    async recordSale(arg0: string, arg1: bigint, arg2: number, arg3: Time): Promise<boolean> {
         if (this.processError) {
             try {
                 const result = await this.actor.recordSale(arg0, arg1, arg2, arg3);
@@ -137,20 +210,6 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.recordSale(arg0, arg1, arg2, arg3);
-            return result;
-        }
-    }
-    async resetStocks(): Promise<void> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.resetStocks();
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.resetStocks();
             return result;
         }
     }

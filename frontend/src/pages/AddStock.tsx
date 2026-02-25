@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { CheckCircle2, Loader2 } from 'lucide-react';
-import { useAddStock, PRODUCTS } from '../hooks/useQueries';
+import { useAddStock, useStockLevels } from '../hooks/useQueries';
 
 type Step = 'product' | 'quantity' | 'price' | 'success';
 
@@ -18,13 +18,19 @@ export function AddStock() {
   const [error, setError] = useState('');
 
   const addStockMutation = useAddStock();
+  const { data: stockLevels, isLoading: productsLoading } = useStockLevels();
+
+  // Derive sorted product names from stock levels
+  const products = stockLevels
+    ? stockLevels.map(([name]) => name).sort((a, b) => a.localeCompare(b))
+    : [];
 
   const effectivePrice = selectedPrice !== null ? selectedPrice : parseFloat(manualPrice);
 
   const handleSubmit = async () => {
     const price = effectivePrice;
     if (isNaN(price) || price <= 0) {
-      setError('Please enter a valid price.');
+      setError('Zəhmət olmasa düzgün qiymət daxil edin.');
       return;
     }
     setError('');
@@ -36,7 +42,8 @@ export function AddStock() {
       });
       setStep('success');
     } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : 'Failed to add stock. Please try again.');
+      const msg = e instanceof Error ? e.message : 'Stok əlavə edilmədi. Yenidən cəhd edin.';
+      setError(msg);
     }
   };
 
@@ -47,10 +54,10 @@ export function AddStock() {
           <CheckCircle2 className="w-10 h-10 text-primary" />
         </div>
         <div>
-          <h2 className="font-display font-bold text-2xl text-foreground">Stock Added!</h2>
+          <h2 className="font-display font-bold text-2xl text-foreground">Stok Əlavə Edildi!</h2>
           <p className="text-muted-foreground mt-2">
             <span className="text-foreground font-semibold">{selectedProduct}</span>
-            {' '}+{selectedQuantity} units @ {effectivePrice.toFixed(2)} AZN
+            {' '}+{selectedQuantity} ədəd @ {effectivePrice.toFixed(2)} AZN
           </p>
         </div>
         <div className="w-full flex flex-col gap-3 mt-4">
@@ -61,16 +68,17 @@ export function AddStock() {
               setSelectedQuantity(0);
               setSelectedPrice(null);
               setManualPrice('');
+              setError('');
             }}
             className="btn-amber w-full text-lg font-bold py-4"
           >
-            Add More Stock
+            Daha Çox Stok Əlavə Et
           </button>
           <button
             onClick={() => navigate({ to: '/' })}
             className="btn-ghost-border w-full text-lg font-bold py-4"
           >
-            Back to Home
+            Ana Səhifəyə Qayıt
           </button>
         </div>
       </div>
@@ -99,23 +107,35 @@ export function AddStock() {
       {step === 'product' && (
         <div className="flex flex-col gap-4">
           <div>
-            <h2 className="font-display font-bold text-2xl text-foreground">Select Product</h2>
-            <p className="text-muted-foreground text-sm mt-1">Which product are you stocking?</p>
+            <h2 className="font-display font-bold text-2xl text-foreground">Məhsul Seçin</h2>
+            <p className="text-muted-foreground text-sm mt-1">Hansı məhsulu stoka əlavə edirsiniz?</p>
           </div>
-          <div className="flex flex-col gap-3">
-            {PRODUCTS.map((product) => (
-              <button
-                key={product}
-                onClick={() => {
-                  setSelectedProduct(product);
-                  setStep('quantity');
-                }}
-                className="btn-ghost-border w-full text-left px-5 py-4 text-base font-semibold"
-              >
-                {product}
-              </button>
-            ))}
-          </div>
+          {productsLoading ? (
+            <div className="flex items-center justify-center py-8">
+              <Loader2 className="w-6 h-6 animate-spin text-primary" />
+              <span className="ml-2 text-muted-foreground text-sm">Yüklənir...</span>
+            </div>
+          ) : (
+            <div className="flex flex-col gap-3">
+              {products.map((product) => (
+                <button
+                  key={product}
+                  onClick={() => {
+                    setSelectedProduct(product);
+                    setStep('quantity');
+                  }}
+                  className="btn-ghost-border w-full text-left px-5 py-4 text-base font-semibold"
+                >
+                  {product}
+                </button>
+              ))}
+              {products.length === 0 && (
+                <div className="card-surface px-5 py-8 text-center text-muted-foreground text-sm">
+                  Məhsul tapılmadı. Əvvəlcə Məhsul İdarəetməsindən məhsul əlavə edin.
+                </div>
+              )}
+            </div>
+          )}
         </div>
       )}
 
@@ -124,8 +144,8 @@ export function AddStock() {
         <div className="flex flex-col gap-4">
           <div>
             <p className="text-primary text-sm font-semibold uppercase tracking-wide">{selectedProduct}</p>
-            <h2 className="font-display font-bold text-2xl text-foreground">Select Quantity</h2>
-            <p className="text-muted-foreground text-sm mt-1">How many units are you adding?</p>
+            <h2 className="font-display font-bold text-2xl text-foreground">Miqdar Seçin</h2>
+            <p className="text-muted-foreground text-sm mt-1">Neçə ədəd əlavə edirsiniz?</p>
           </div>
           <div className="grid grid-cols-3 gap-3">
             {QUANTITY_OPTIONS.map((qty) => (
@@ -138,15 +158,40 @@ export function AddStock() {
                 className="btn-amber flex flex-col items-center justify-center py-5 text-xl font-bold"
               >
                 <span className="text-2xl font-display">+{qty}</span>
-                <span className="text-xs opacity-70 mt-0.5">units</span>
+                <span className="text-xs opacity-70 mt-0.5">ədəd</span>
               </button>
             ))}
+          </div>
+          {/* Custom quantity input */}
+          <div className="flex flex-col gap-2">
+            <label className="text-sm font-medium text-muted-foreground">Və ya əl ilə daxil edin:</label>
+            <div className="flex gap-2">
+              <input
+                type="number"
+                min="1"
+                placeholder="Miqdar"
+                className="flex-1 bg-card border border-border rounded-xl px-4 py-4 text-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                style={{ fontSize: '16px' }}
+                onChange={(e) => {
+                  const val = parseInt(e.target.value);
+                  if (!isNaN(val) && val > 0) setSelectedQuantity(val);
+                }}
+              />
+              <button
+                onClick={() => {
+                  if (selectedQuantity > 0) setStep('price');
+                }}
+                className="btn-amber px-5 py-4 font-bold"
+              >
+                →
+              </button>
+            </div>
           </div>
           <button
             onClick={() => setStep('product')}
             className="text-muted-foreground text-sm underline text-center mt-2"
           >
-            ← Change product
+            ← Məhsulu dəyiş
           </button>
         </div>
       )}
@@ -156,10 +201,10 @@ export function AddStock() {
         <div className="flex flex-col gap-4">
           <div>
             <p className="text-primary text-sm font-semibold uppercase tracking-wide">
-              {selectedProduct} · +{selectedQuantity} units
+              {selectedProduct} · +{selectedQuantity} ədəd
             </p>
-            <h2 className="font-display font-bold text-2xl text-foreground">Purchase Price</h2>
-            <p className="text-muted-foreground text-sm mt-1">What did you pay per unit?</p>
+            <h2 className="font-display font-bold text-2xl text-foreground">Alış Qiyməti</h2>
+            <p className="text-muted-foreground text-sm mt-1">Hər ədəd üçün nə qədər ödədiniz?</p>
           </div>
 
           <div className="grid grid-cols-3 gap-3">
@@ -171,7 +216,7 @@ export function AddStock() {
                   setManualPrice('');
                 }}
                 className={`btn-ghost-border flex flex-col items-center justify-center py-5 ${
-                  selectedPrice === price ? 'btn-selected bg-primary/10' : ''
+                  selectedPrice === price ? 'border-primary bg-primary/10' : ''
                 }`}
               >
                 <span className="text-xl font-display font-bold">{price.toFixed(2)}</span>
@@ -181,7 +226,7 @@ export function AddStock() {
           </div>
 
           <div className="flex flex-col gap-2">
-            <label className="text-sm font-medium text-muted-foreground">Or enter manually:</label>
+            <label className="text-sm font-medium text-muted-foreground">Və ya əl ilə daxil edin:</label>
             <input
               type="number"
               step="0.01"
@@ -193,6 +238,7 @@ export function AddStock() {
               }}
               placeholder="0.00 AZN"
               className="w-full bg-card border border-border rounded-xl px-4 py-4 text-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+              style={{ fontSize: '16px' }}
             />
           </div>
 
@@ -205,15 +251,15 @@ export function AddStock() {
           <button
             onClick={handleSubmit}
             disabled={addStockMutation.isPending || (selectedPrice === null && !manualPrice)}
-            className="btn-amber w-full text-lg font-bold py-4 flex items-center justify-center gap-2"
+            className="btn-amber w-full text-lg font-bold py-4 flex items-center justify-center gap-2 disabled:opacity-50"
           >
             {addStockMutation.isPending ? (
               <>
                 <Loader2 className="w-5 h-5 animate-spin" />
-                Adding Stock...
+                Əlavə edilir...
               </>
             ) : (
-              'Confirm & Add Stock'
+              'Təsdiq et və Əlavə et'
             )}
           </button>
 
@@ -221,7 +267,7 @@ export function AddStock() {
             onClick={() => setStep('quantity')}
             className="text-muted-foreground text-sm underline text-center"
           >
-            ← Change quantity
+            ← Miqdarı dəyiş
           </button>
         </div>
       )}

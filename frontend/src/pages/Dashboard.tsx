@@ -1,40 +1,54 @@
 import { useNavigate } from '@tanstack/react-router';
-import { PackagePlus, ShoppingCart, Eye, BarChart2, RotateCcw } from 'lucide-react';
+import { PackagePlus, ShoppingCart, Eye, BarChart2, RotateCcw, History, Settings } from 'lucide-react';
 
 const actions = [
   {
-    label: 'Add Stock',
+    label: 'Stok Əlavə Et',
     icon: PackagePlus,
     path: '/add-stock',
-    description: 'Receive new inventory',
+    description: 'Yeni mal qəbul et',
     variant: 'amber' as const,
   },
   {
-    label: 'Record Sale',
+    label: 'Satış Qeydiyyatı',
     icon: ShoppingCart,
     path: '/record-sale',
-    description: 'Log a customer sale',
+    description: 'Müştəri satışını qeyd et',
     variant: 'amber' as const,
   },
   {
-    label: 'View Inventory',
+    label: 'Anbara Bax',
     icon: Eye,
     path: '/view-inventory',
-    description: 'Check stock levels',
+    description: 'Stok səviyyələrini yoxla',
     variant: 'secondary' as const,
   },
   {
-    label: 'Daily Sales Report',
+    label: 'Günlük Satış Hesabatı',
     icon: BarChart2,
     path: '/daily-sales-report',
-    description: "Today's revenue summary",
+    description: 'Bugünkü gəlir və xeyir xülasəsi',
     variant: 'secondary' as const,
   },
   {
-    label: 'Reset Inventory',
+    label: 'Satış Tarixçəsi',
+    icon: History,
+    path: '/sales-history',
+    description: 'Bütün satış qeydləri və hesabat',
+    variant: 'secondary' as const,
+  },
+  {
+    label: 'Məhsul İdarəetməsi',
+    icon: Settings,
+    path: '/product-management',
+    description: 'Məhsul əlavə et və ya sil',
+    variant: 'secondary' as const,
+  },
+  {
+    label: 'Anbarı Sıfırla',
     icon: RotateCcw,
     path: '/reset-inventory',
-    description: 'Admin: zero all stock',
+    description: 'Admin: bütün stoku sıfırla',
     variant: 'danger' as const,
   },
 ];
@@ -46,7 +60,7 @@ export function Dashboard() {
     <div className="animate-fade-in flex flex-col gap-3">
       <div className="mb-2">
         <p className="text-muted-foreground text-sm font-medium">
-          {new Date().toLocaleDateString('en-US', {
+          {new Date().toLocaleDateString('az-AZ', {
             weekday: 'long',
             year: 'numeric',
             month: 'long',

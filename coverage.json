@@ -1,255 +1,131 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-25T20:45:43.426Z",
+  "generatedAt": "2026-02-25T21:51:43.602Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 12,
-    "implemented": 7,
+    "total": 9,
+    "implemented": 6,
     "items": [
       {
-        "id": "REQ-1",
-        "summary": "Define 5 predefined products in the backend: Marlboro Silver, Marlboro Gold, Parliament Silver, Parliament Platinium, Parliament Superslim. Each product must store: name, quantity in stock (integer), and last purchase price (float). Persist all data in stable storage so it survives canister restarts.",
+        "id": "REQ-25",
+        "summary": "Extend the backend getZReport (and any daily sales query) to return, for each product sold today: product name, quantity sold, selling price, purchase price (last known buy price), revenue (quantity × selling price), and profit (quantity × (selling price - purchase price)). Also return totals: total daily revenue, total daily profit, and total quantity sold across all products.",
         "status": "unknown",
         "plannedFiles": [],
         "matchedFiles": []
       },
       {
-        "id": "REQ-10",
-        "summary": "Build the password-protected Daily Sales Report screen. When the user taps 'Daily Sales Report', show a password prompt. If the password matches 'gulserxan', display today's sales summary: list of products sold today, total quantity sold per product, and total revenue for today.",
+        "id": "REQ-26",
+        "summary": "Update DailySalesReport.tsx to display the enriched report data returned by getZReport. For each product sold today, show: product name, quantity sold, selling price (AZN), purchase price (AZN), revenue (AZN), and profit (AZN). Below the per-product list, show summary totals: Total Quantity Sold, Total Daily Revenue, and Total Daily Profit. All labels in English.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/pages/DailySalesReport.tsx",
+          "frontend/src/pages/DailySalesReport.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/pages/DailySalesReport.tsx"
+        ]
+      },
+      {
+        "id": "REQ-27",
+        "summary": "Add backend functions for product management: (1) addProduct(name: Text) — adds a new product with zero stock and zero purchase price to the stable products map, returning an error if the name already exists; (2) deleteProduct(name: Text) — removes the product from the stable products map and removes all associated sale records from the stable sales list, returning an error if the product does not exist.",
+        "status": "unknown",
+        "plannedFiles": [],
+        "matchedFiles": []
+      },
+      {
+        "id": "REQ-28",
+        "summary": "Add React Query mutation hooks useAddProduct and useDeleteProduct in useQueries.ts that call the backend addProduct and deleteProduct functions respectively. On success, invalidate all relevant queries (stock levels, sales history, Z-report).",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/hooks/useQueries.ts"
+        ],
+        "matchedFiles": [
+          "frontend/src/hooks/useQueries.ts"
+        ]
+      },
+      {
+        "id": "REQ-29",
+        "summary": "Create a new Product Management page (ProductManagement.tsx) accessible from the Dashboard via a new 'Manage Products' button. The page must be password-protected (password: 'gulserxan'). After authentication, display: (1) a text input field and an 'Add Product' button to add a new product by name; (2) a list of all current products (fetched via getStockLevels) each with a delete (trash) button. Confirm deletion with an inline confirmation prompt before calling deleteProduct. Show success and error feedback for both add and delete actions. All labels in English.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/pages/ProductManagement.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/pages/ProductManagement.tsx"
+        ]
+      },
+      {
+        "id": "REQ-30",
+        "summary": "Update the Dashboard (Dashboard.tsx) to include a new 'Manage Products' navigation button that routes to the ProductManagement page. The button must follow the same full-width, large, mobile-first styling as existing dashboard buttons.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/pages/Dashboard.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/pages/Dashboard.tsx"
+        ]
+      },
+      {
+        "id": "REQ-31",
+        "summary": "Update App.tsx to register a route for the ProductManagement page (e.g., /product-management).",
+        "status": "implemented",
+        "plannedFiles": [
           "frontend/src/App.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/pages/DailySalesReport.tsx",
           "frontend/src/App.tsx"
         ]
       },
       {
-        "id": "REQ-11",
-        "summary": "Build the Admin Reset flow. When the user taps 'Reset Inventory', show a password prompt. If the password matches 'gulserxan', show a confirmation dialog warning that all stock will be set to zero. On confirmation, call the backend reset function and show a success message.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/pages/ResetInventory.tsx",
-          "frontend/src/App.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/pages/ResetInventory.tsx",
-          "frontend/src/App.tsx"
-        ]
-      },
-      {
-        "id": "REQ-12",
-        "summary": "Apply a clean, modern dark-themed visual design across all screens. Use a dark background (near-black or very dark gray) with high-contrast white or light-gray text. Accent color should be a warm amber/orange tone to evoke a shop/retail feel. All buttons must be large, with generous padding and rounded corners. Typography must be large and legible. The layout must be mobile-first (single-column, full-width elements) with a consistent header showing the app name and a back button on sub-screens.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/index.css",
-          "frontend/tailwind.config.js",
-          "frontend/src/components/Header.tsx",
-          "frontend/src/components/Layout.tsx",
-          "frontend/src/App.tsx",
-          "frontend/public/assets/generated/shop-logo.dim_256x256.png"
-        ],
-        "matchedFiles": [
-          "frontend/src/index.css",
-          "frontend/tailwind.config.js",
-          "frontend/src/components/Header.tsx",
-          "frontend/src/components/Layout.tsx",
-          "frontend/src/App.tsx",
-          "frontend/public/assets/generated/shop-logo.dim_256x256.png"
-        ]
-      },
-      {
-        "id": "REQ-2",
-        "summary": "Implement an Add Stock backend function: accepts product name, quantity to add (+10, +20, +50, or any positive integer), and purchase price. Increments the product's stock quantity and updates its last purchase price.",
-        "status": "unknown",
-        "plannedFiles": [],
-        "matchedFiles": []
-      },
-      {
-        "id": "REQ-3",
-        "summary": "Implement a Record Sale backend function: accepts product name, quantity sold, selling price (AZN), and timestamp. Decreases product stock by the given quantity and saves a sale record (date, product, quantity, selling price). Reject the sale if stock is insufficient.",
-        "status": "unknown",
-        "plannedFiles": [],
-        "matchedFiles": []
-      },
-      {
-        "id": "REQ-4",
-        "summary": "Implement a backend query to return all sale records from the current calendar day (today), grouped by product: total quantity sold per product and total revenue for today.",
-        "status": "unknown",
-        "plannedFiles": [],
-        "matchedFiles": []
-      },
-      {
-        "id": "REQ-5",
-        "summary": "Implement an Admin Reset backend function: resets all product stock quantities to zero. This function must be callable only after password validation on the frontend (password: gulserxan).",
-        "status": "unknown",
-        "plannedFiles": [],
-        "matchedFiles": []
-      },
-      {
-        "id": "REQ-6",
-        "summary": "Build the main dashboard home screen with 5 large, tappable buttons: Add Stock, Record Sale, View Inventory, Daily Sales Report, Reset Inventory. The dashboard must be mobile-first with full-width buttons easy to tap with a thumb.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/pages/Dashboard.tsx",
-          "frontend/src/App.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/pages/Dashboard.tsx",
-          "frontend/src/App.tsx"
-        ]
-      },
-      {
-        "id": "REQ-7",
-        "summary": "Build the Add Stock flow screen: Step 1 — select product using large buttons (one per product). Step 2 — select quantity using buttons: +10, +20, +50. Step 3 — select purchase price using buttons: 0.50, 0.60, 0.70, plus a manual numeric input field. Step 4 — confirm to submit. Show a success confirmation after update.",
+        "id": "REQ-32",
+        "summary": "Ensure the AddStock, RecordSale, ViewInventory, SalesHistory, and DailySalesReport pages dynamically fetch the current product list (via getStockLevels) and render product selection buttons for all products currently in stable storage — including newly added products and excluding deleted ones. Remove any hardcoded product name arrays from these pages.",
         "status": "implemented",
         "plannedFiles": [
           "frontend/src/pages/AddStock.tsx",
-          "frontend/src/App.tsx"
+          "frontend/src/pages/RecordSale.tsx",
+          "frontend/src/pages/ViewInventory.tsx",
+          "frontend/src/pages/SalesHistory.tsx"
         ],
         "matchedFiles": [
           "frontend/src/pages/AddStock.tsx",
-          "frontend/src/App.tsx"
+          "frontend/src/pages/RecordSale.tsx",
+          "frontend/src/pages/ViewInventory.tsx",
+          "frontend/src/pages/SalesHistory.tsx"
         ]
       },
       {
-        "id": "REQ-8",
-        "summary": "Build the Record Sale flow screen: Step 1 — select product using large buttons. Step 2 — select quantity using buttons: -1, -2, -5, -10. Step 3 — select selling price using buttons: 9 AZN, 10 AZN, 11 AZN, 12 AZN. Step 4 — confirm to submit. Display an error if stock is insufficient. Show success confirmation on completion.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/pages/RecordSale.tsx",
-          "frontend/src/App.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/pages/RecordSale.tsx",
-          "frontend/src/App.tsx"
-        ]
-      },
-      {
-        "id": "REQ-9",
-        "summary": "Build the password-protected Inventory View screen. When the user taps 'View Inventory' on the dashboard, show a password entry prompt. If the password matches 'gulserxan', display a clean list of all 5 products with their current stock quantity. Show an error for wrong password.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/pages/ViewInventory.tsx",
-          "frontend/src/App.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/pages/ViewInventory.tsx",
-          "frontend/src/App.tsx"
-        ]
+        "id": "REQ-33",
+        "summary": "Generate a migration module (migration.mo) that preserves all existing stable data (products map and sales list) when upgrading the canister to the new version that adds the addProduct and deleteProduct functions.",
+        "status": "unknown",
+        "plannedFiles": [],
+        "matchedFiles": []
       }
     ]
   },
   "changedFiles": [
     "backend/main.mo",
     "build-request.json",
-    "build-template/Dockerfile",
-    "build-template/LICENSE",
     "build-template/README.md",
-    "build-template/deploy.sh",
-    "build-template/icp.yaml",
-    "build-template/package.json",
-    "build-template/pnpm-lock.yaml",
-    "build-template/pnpm-workspace.yaml",
-    "build-template/scripts/prune-unused-images.js",
-    "build-template/scripts/resize-images.js",
-    "build-template/src/backend/canister.yaml",
-    "build-template/src/backend/system-idl/aaaaa-aa.did",
-    "build-template/src/frontend/canister.yaml",
-    "build-template/src/frontend/components.json",
-    "build-template/src/frontend/env.json",
-    "build-template/src/frontend/eslint-rules/no-bigint-in-query-keys.js",
-    "build-template/src/frontend/eslint-rules/require-internet-identity-provider.js",
-    "build-template/src/frontend/eslint.config.js",
-    "build-template/src/frontend/package.json",
-    "build-template/src/frontend/postcss.config.js",
-    "build-template/src/frontend/src/components/ui/accordion.tsx",
-    "build-template/src/frontend/src/components/ui/alert-dialog.tsx",
-    "build-template/src/frontend/src/components/ui/alert.tsx",
-    "build-template/src/frontend/src/components/ui/aspect-ratio.tsx",
-    "build-template/src/frontend/src/components/ui/avatar.tsx",
-    "build-template/src/frontend/src/components/ui/badge.tsx",
-    "build-template/src/frontend/src/components/ui/breadcrumb.tsx",
-    "build-template/src/frontend/src/components/ui/button.tsx",
-    "build-template/src/frontend/src/components/ui/calendar.tsx",
-    "build-template/src/frontend/src/components/ui/card.tsx",
-    "build-template/src/frontend/src/components/ui/carousel.tsx",
-    "build-template/src/frontend/src/components/ui/chart.tsx",
-    "build-template/src/frontend/src/components/ui/checkbox.tsx",
-    "build-template/src/frontend/src/components/ui/collapsible.tsx",
-    "build-template/src/frontend/src/components/ui/command.tsx",
-    "build-template/src/frontend/src/components/ui/context-menu.tsx",
-    "build-template/src/frontend/src/components/ui/dialog.tsx",
-    "build-template/src/frontend/src/components/ui/drawer.tsx",
-    "build-template/src/frontend/src/components/ui/dropdown-menu.tsx",
-    "build-template/src/frontend/src/components/ui/form.tsx",
-    "build-template/src/frontend/src/components/ui/hover-card.tsx",
-    "build-template/src/frontend/src/components/ui/input-otp.tsx",
-    "build-template/src/frontend/src/components/ui/input.tsx",
-    "build-template/src/frontend/src/components/ui/label.tsx",
-    "build-template/src/frontend/src/components/ui/menubar.tsx",
-    "build-template/src/frontend/src/components/ui/navigation-menu.tsx",
-    "build-template/src/frontend/src/components/ui/pagination.tsx",
-    "build-template/src/frontend/src/components/ui/popover.tsx",
-    "build-template/src/frontend/src/components/ui/progress.tsx",
-    "build-template/src/frontend/src/components/ui/radio-group.tsx",
-    "build-template/src/frontend/src/components/ui/resizable.tsx",
-    "build-template/src/frontend/src/components/ui/scroll-area.tsx",
-    "build-template/src/frontend/src/components/ui/select.tsx",
-    "build-template/src/frontend/src/components/ui/separator.tsx",
-    "build-template/src/frontend/src/components/ui/sheet.tsx",
-    "build-template/src/frontend/src/components/ui/sidebar.tsx",
-    "build-template/src/frontend/src/components/ui/skeleton.tsx",
-    "build-template/src/frontend/src/components/ui/slider.tsx",
-    "build-template/src/frontend/src/components/ui/sonner.tsx",
-    "build-template/src/frontend/src/components/ui/switch.tsx",
-    "build-template/src/frontend/src/components/ui/table.tsx",
-    "build-template/src/frontend/src/components/ui/tabs.tsx",
-    "build-template/src/frontend/src/components/ui/textarea.tsx",
-    "build-template/src/frontend/src/components/ui/toggle-group.tsx",
-    "build-template/src/frontend/src/components/ui/toggle.tsx",
-    "build-template/src/frontend/src/components/ui/tooltip.tsx",
-    "build-template/src/frontend/src/hooks/use-mobile.tsx",
-    "build-template/src/frontend/src/lib/utils.ts",
-    "build-template/src/frontend/tsconfig.json",
-    "build-template/src/frontend/vite.config.js",
-    "build-template/tsconfig.json",
     "caffeine.lock.json",
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/index.css",
-    "frontend/index.html",
-    "frontend/public/assets/generated/shop-logo.dim_256x256.png",
     "frontend/src/App.tsx",
     "frontend/src/backend.d.ts",
     "frontend/src/backend.ts",
-    "frontend/src/components/Header.tsx",
-    "frontend/src/components/Layout.tsx",
-    "frontend/src/components/PasswordGate.tsx",
-    "frontend/src/config.ts",
     "frontend/src/declarations/backend.did.d.ts",
     "frontend/src/declarations/backend.did.js",
-    "frontend/src/hooks/useActor.ts",
-    "frontend/src/hooks/useInternetIdentity.ts",
     "frontend/src/hooks/useQueries.ts",
-    "frontend/src/index.css",
-    "frontend/src/main.tsx",
     "frontend/src/pages/AddStock.tsx",
     "frontend/src/pages/DailySalesReport.tsx",
     "frontend/src/pages/Dashboard.tsx",
+    "frontend/src/pages/ProductManagement.tsx",
     "frontend/src/pages/RecordSale.tsx",
-    "frontend/src/pages/ResetInventory.tsx",
+    "frontend/src/pages/SalesHistory.tsx",
     "frontend/src/pages/ViewInventory.tsx",
-    "frontend/src/ui-summary.json",
-    "frontend/src/utils/StorageClient.ts",
-    "frontend/tailwind.config.js",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

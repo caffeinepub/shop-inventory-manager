@@ -8,9 +8,26 @@ export interface None {
 }
 export type Option<T> = Some<T> | None;
 export type Time = bigint;
+export interface ZReport {
+    totalProfit: number;
+    totalRevenue: number;
+    products: Array<ZReportProduct>;
+    totalQuantity: bigint;
+}
+export interface ZReportProduct {
+    purchasePrice: number;
+    revenue: number;
+    sellingPrice: number;
+    productName: string;
+    quantitySold: bigint;
+    profit: number;
+}
 export interface backendInterface {
-    addStock(productName: string, quantity: bigint, purchasePrice: number): Promise<void>;
-    getTodaySales(): Promise<Array<[string, bigint, number]>>;
-    recordSale(productName: string, quantitySold: bigint, sellingPrice: number, timestamp: Time): Promise<void>;
-    resetStocks(): Promise<void>;
+    addProduct(productName: string): Promise<boolean>;
+    addStock(productName: string, quantity: bigint, purchasePrice: number): Promise<boolean>;
+    deleteProduct(productName: string): Promise<boolean>;
+    getSalesHistory(): Promise<Array<[string, bigint, number, Time]>>;
+    getStockLevels(): Promise<Array<[string, bigint]>>;
+    getZReport(): Promise<ZReport>;
+    recordSale(productName: string, quantitySold: bigint, sellingPrice: number, timestamp: Time): Promise<boolean>;
 }

@@ -6,16 +6,8 @@ import { RecordSale } from './pages/RecordSale';
 import { ViewInventory } from './pages/ViewInventory';
 import { DailySalesReport } from './pages/DailySalesReport';
 import { ResetInventory } from './pages/ResetInventory';
-
-// Page title map
-const PAGE_TITLES: Record<string, string> = {
-  '/': 'Shop Inventory',
-  '/add-stock': 'Add Stock',
-  '/record-sale': 'Record Sale',
-  '/view-inventory': 'View Inventory',
-  '/daily-sales-report': 'Sales Report',
-  '/reset-inventory': 'Reset Inventory',
-};
+import { SalesHistory } from './pages/SalesHistory';
+import { ProductManagement } from './pages/ProductManagement';
 
 function RootLayout() {
   return (
@@ -58,10 +50,22 @@ const dailySalesReportRoute = createRoute({
   component: DailySalesReport,
 });
 
+const salesHistoryRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/sales-history',
+  component: SalesHistory,
+});
+
 const resetInventoryRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/reset-inventory',
   component: ResetInventory,
+});
+
+const productManagementRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/product-management',
+  component: ProductManagement,
 });
 
 const routeTree = rootRoute.addChildren([
@@ -70,7 +74,9 @@ const routeTree = rootRoute.addChildren([
   recordSaleRoute,
   viewInventoryRoute,
   dailySalesReportRoute,
+  salesHistoryRoute,
   resetInventoryRoute,
+  productManagementRoute,
 ]);
 
 const router = createRouter({ routeTree });

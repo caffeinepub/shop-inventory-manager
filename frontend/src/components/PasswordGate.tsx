@@ -20,7 +20,7 @@ export function PasswordGate({ onSuccess, title, description }: PasswordGateProp
       setError('');
       onSuccess();
     } else {
-      setError('Incorrect password. Please try again.');
+      setError('Yanlış şifrə. Yenidən cəhd edin.');
       setPassword('');
     }
   };
@@ -47,14 +47,15 @@ export function PasswordGate({ onSuccess, title, description }: PasswordGateProp
               setPassword(e.target.value);
               setError('');
             }}
-            placeholder="Enter password"
+            placeholder="Şifrəni daxil edin"
             autoFocus
-            className="w-full bg-card border border-border rounded-xl px-4 py-4 text-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary pr-12"
+            className="w-full bg-card border border-border rounded-xl px-4 py-4 text-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary pr-14"
+            style={{ fontSize: '16px' }}
           />
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground p-1"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground p-2 min-w-[44px] min-h-[44px] flex items-center justify-center"
           >
             {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
           </button>
@@ -70,7 +71,7 @@ export function PasswordGate({ onSuccess, title, description }: PasswordGateProp
           type="submit"
           className="btn-amber w-full text-lg font-bold py-4"
         >
-          Unlock
+          Daxil ol
         </button>
       </form>
     </div>

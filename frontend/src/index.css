@@ -8,7 +8,7 @@
   :root {
     --radius: 0.75rem;
 
-    /* Light mode (not primary use case, but defined) */
+    /* Light mode */
     --background: 0.97 0 0;
     --foreground: 0.12 0 0;
     --card: 1 0 0;
@@ -42,7 +42,6 @@
     --sidebar-border: 0.88 0 0;
     --sidebar-ring: 0.72 0.18 55;
 
-    /* Amber accent tokens */
     --amber: 0.72 0.18 55;
     --amber-dim: 0.62 0.16 55;
     --surface: 0.97 0 0;
@@ -103,6 +102,13 @@
     -webkit-tap-highlight-color: transparent;
     overscroll-behavior: none;
   }
+
+  /* Mobile: prevent iOS auto-zoom on input focus */
+  input,
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
 }
 
 @layer utilities {
@@ -115,6 +121,10 @@
            active:scale-95 transition-all duration-100
            disabled:opacity-50 disabled:cursor-not-allowed;
     min-height: 56px;
+    padding-top: 14px;
+    padding-bottom: 14px;
+    padding-left: 16px;
+    padding-right: 16px;
   }
 
   .btn-secondary {
@@ -122,6 +132,10 @@
            border border-border active:scale-95 transition-all duration-100
            disabled:opacity-50 disabled:cursor-not-allowed;
     min-height: 56px;
+    padding-top: 14px;
+    padding-bottom: 14px;
+    padding-left: 16px;
+    padding-right: 16px;
   }
 
   .btn-ghost-border {
@@ -129,6 +143,10 @@
            border-2 border-border active:scale-95 transition-all duration-100
            disabled:opacity-50 disabled:cursor-not-allowed;
     min-height: 56px;
+    padding-top: 14px;
+    padding-bottom: 14px;
+    padding-left: 16px;
+    padding-right: 16px;
   }
 
   .btn-selected {

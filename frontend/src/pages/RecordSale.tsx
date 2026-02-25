@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from '@tanstack/react-router';
-import { CheckCircle2, Loader2, AlertTriangle } from 'lucide-react';
-import { useRecordSale, PRODUCTS } from '../hooks/useQueries';
+import { CheckCircle2, Loader2 } from 'lucide-react';
+import { useRecordSale, useStockLevels } from '../hooks/useQueries';
 
 type Step = 'product' | 'quantity' | 'price' | 'success';
 
@@ -14,25 +14,52 @@ export function RecordSale() {
   const [selectedProduct, setSelectedProduct] = useState('');
   const [selectedQuantity, setSelectedQuantity] = useState(0);
   const [selectedPrice, setSelectedPrice] = useState(0);
+  const [priceInput, setPriceInput] = useState('');
   const [error, setError] = useState('');
 
   const recordSaleMutation = useRecordSale();
+  const { data: stockLevels, isLoading: productsLoading } = useStockLevels();
+
+  // Derive sorted product names from stock levels
+  const products = stockLevels
+    ? stockLevels.map(([name]) => name).sort((a, b) => a.localeCompare(b))
+    : [];
+
+  const effectivePrice = parseFloat(priceInput);
+  const isPriceValid = priceInput.trim() !== '' && !isNaN(effectivePrice) && effectivePrice > 0;
+
+  const handlePresetPrice = (price: number) => {
+    setSelectedPrice(price);
+    setPriceInput(String(price));
+  };
+
+  const handlePriceInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    setPriceInput(val);
+    const parsed = parseFloat(val);
+    if (!isNaN(parsed) && parsed > 0) {
+      setSelectedPrice(parsed);
+    } else {
+      setSelectedPrice(0);
+    }
+  };
 
   const handleSubmit = async () => {
     setError('');
+    if (!isPriceValid) return;
     try {
       await recordSaleMutation.mutateAsync({
         productName: selectedProduct,
         quantitySold: selectedQuantity,
-        sellingPrice: selectedPrice,
+        sellingPrice: effectivePrice,
       });
       setStep('success');
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : String(e);
-      if (msg.toLowerCase().includes('insufficient')) {
-        setError('Not enough stock! Please check inventory before recording this sale.');
+      if (msg === 'INSUFFICIENT_STOCK' || msg.toLowerCase().includes('insufficient')) {
+        setError('Stok kifayət deyil! Bu məhsulun anbarında yetəri qədər mal yoxdur.');
       } else {
-        setError('Failed to record sale. Please try again.');
+        setError('Satış qeyd edilmədi. Yenidən cəhd edin.');
       }
     }
   };
@@ -44,13 +71,13 @@ export function RecordSale() {
           <CheckCircle2 className="w-10 h-10 text-primary" />
         </div>
         <div>
-          <h2 className="font-display font-bold text-2xl text-foreground">Sale Recorded!</h2>
+          <h2 className="font-display font-bold text-2xl text-foreground">Satış Qeyd Edildi!</h2>
           <p className="text-muted-foreground mt-2">
             <span className="text-foreground font-semibold">{selectedProduct}</span>
-            {' '}×{selectedQuantity} @ {selectedPrice} AZN
+            {' '}×{selectedQuantity} @ {effectivePrice} AZN
           </p>
           <p className="text-primary font-bold text-xl mt-2">
-            Total: {(selectedQuantity * selectedPrice).toFixed(0)} AZN
+            Cəmi: {(selectedQuantity * effectivePrice).toFixed(2)} AZN
           </p>
         </div>
         <div className="w-full flex flex-col gap-3 mt-4">
@@ -60,17 +87,18 @@ export function RecordSale() {
               setSelectedProduct('');
               setSelectedQuantity(0);
               setSelectedPrice(0);
+              setPriceInput('');
               setError('');
             }}
             className="btn-amber w-full text-lg font-bold py-4"
           >
-            Record Another Sale
+            Başqa Satış Qeyd Et
           </button>
           <button
             onClick={() => navigate({ to: '/' })}
             className="btn-ghost-border w-full text-lg font-bold py-4"
           >
-            Back to Home
+            Ana Səhifəyə Qayıt
           </button>
         </div>
       </div>
@@ -99,23 +127,35 @@ export function RecordSale() {
       {step === 'product' && (
         <div className="flex flex-col gap-4">
           <div>
-            <h2 className="font-display font-bold text-2xl text-foreground">Select Product</h2>
-            <p className="text-muted-foreground text-sm mt-1">What did the customer buy?</p>
+            <h2 className="font-display font-bold text-2xl text-foreground">Məhsul Seçin</h2>
+            <p className="text-muted-foreground text-sm mt-1">Müştəri nə aldı?</p>
           </div>
-          <div className="flex flex-col gap-3">
-            {PRODUCTS.map((product) => (
-              <button
-                key={product}
-                onClick={() => {
-                  setSelectedProduct(product);
-                  setStep('quantity');
-                }}
-                className="btn-ghost-border w-full text-left px-5 py-4 text-base font-semibold"
-              >
-                {product}
-              </button>
-            ))}
-          </div>
+          {productsLoading ? (
+            <div className="flex items-center justify-center py-8">
+              <Loader2 className="w-6 h-6 animate-spin text-primary" />
+              <span className="ml-2 text-muted-foreground text-sm">Yüklənir...</span>
+            </div>
+          ) : (
+            <div className="flex flex-col gap-3">
+              {products.map((product) => (
+                <button
+                  key={product}
+                  onClick={() => {
+                    setSelectedProduct(product);
+                    setStep('quantity');
+                  }}
+                  className="btn-ghost-border w-full text-left px-5 py-4 text-base font-semibold"
+                >
+                  {product}
+                </button>
+              ))}
+              {products.length === 0 && (
+                <div className="card-surface px-5 py-8 text-center text-muted-foreground text-sm">
+                  Məhsul tapılmadı. Əvvəlcə Məhsul İdarəetməsindən məhsul əlavə edin.
+                </div>
+              )}
+            </div>
+          )}
         </div>
       )}
 
@@ -124,8 +164,8 @@ export function RecordSale() {
         <div className="flex flex-col gap-4">
           <div>
             <p className="text-primary text-sm font-semibold uppercase tracking-wide">{selectedProduct}</p>
-            <h2 className="font-display font-bold text-2xl text-foreground">Select Quantity</h2>
-            <p className="text-muted-foreground text-sm mt-1">How many units were sold?</p>
+            <h2 className="font-display font-bold text-2xl text-foreground">Miqdar Seçin</h2>
+            <p className="text-muted-foreground text-sm mt-1">Neçə ədəd satıldı?</p>
           </div>
           <div className="grid grid-cols-2 gap-3">
             {QUANTITY_OPTIONS.map((qty) => (
@@ -138,15 +178,40 @@ export function RecordSale() {
                 className="btn-amber flex flex-col items-center justify-center py-5"
               >
                 <span className="text-3xl font-display font-bold">×{qty}</span>
-                <span className="text-xs opacity-70 mt-0.5">unit{qty > 1 ? 's' : ''}</span>
+                <span className="text-xs opacity-70 mt-0.5">ədəd</span>
               </button>
             ))}
+          </div>
+          {/* Custom quantity input */}
+          <div className="flex flex-col gap-2">
+            <label className="text-sm font-medium text-muted-foreground">Və ya əl ilə daxil edin:</label>
+            <div className="flex gap-2">
+              <input
+                type="number"
+                min="1"
+                placeholder="Miqdar"
+                className="flex-1 bg-card border border-border rounded-xl px-4 py-4 text-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                style={{ fontSize: '16px' }}
+                onChange={(e) => {
+                  const val = parseInt(e.target.value);
+                  if (!isNaN(val) && val > 0) setSelectedQuantity(val);
+                }}
+              />
+              <button
+                onClick={() => {
+                  if (selectedQuantity > 0) setStep('price');
+                }}
+                className="btn-amber px-5 py-4 font-bold"
+              >
+                →
+              </button>
+            </div>
           </div>
           <button
             onClick={() => setStep('product')}
             className="text-muted-foreground text-sm underline text-center mt-2"
           >
-            ← Change product
+            ← Məhsulu dəyiş
           </button>
         </div>
       )}
@@ -158,64 +223,68 @@ export function RecordSale() {
             <p className="text-primary text-sm font-semibold uppercase tracking-wide">
               {selectedProduct} · ×{selectedQuantity}
             </p>
-            <h2 className="font-display font-bold text-2xl text-foreground">Selling Price</h2>
-            <p className="text-muted-foreground text-sm mt-1">What price per unit?</p>
+            <h2 className="font-display font-bold text-2xl text-foreground">Satış Qiyməti</h2>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             {PRICE_OPTIONS.map((price) => (
               <button
                 key={price}
-                onClick={() => setSelectedPrice(price)}
+                onClick={() => handlePresetPrice(price)}
                 className={`btn-ghost-border flex flex-col items-center justify-center py-5 ${
-                  selectedPrice === price ? 'btn-selected bg-primary/10' : ''
+                  selectedPrice === price && priceInput === String(price)
+                    ? 'border-primary bg-primary/10'
+                    : ''
                 }`}
               >
                 <span className="text-2xl font-display font-bold">{price}</span>
-                <span className="text-sm text-muted-foreground mt-0.5">AZN</span>
+                <span className="text-xs text-muted-foreground mt-0.5">AZN</span>
               </button>
             ))}
           </div>
 
-          {selectedPrice > 0 && (
-            <div className="bg-primary/10 border border-primary/30 rounded-xl px-4 py-3 text-center">
-              <span className="text-muted-foreground text-sm">Total: </span>
-              <span className="text-primary font-bold text-xl">
-                {(selectedQuantity * selectedPrice).toFixed(0)} AZN
-              </span>
-            </div>
-          )}
+          <div className="flex flex-col gap-2">
+            <label className="text-sm font-medium text-muted-foreground">Qiymət (AZN):</label>
+            <input
+              type="number"
+              step="0.01"
+              min="0"
+              value={priceInput}
+              onChange={handlePriceInputChange}
+              placeholder="0.00 AZN"
+              className="w-full bg-card border border-border rounded-xl px-4 py-4 text-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+              style={{ fontSize: '16px' }}
+            />
+          </div>
 
           {error && (
-            <div className="bg-destructive/15 border border-destructive/30 rounded-xl px-4 py-3 flex items-start gap-3">
-              <AlertTriangle className="w-5 h-5 text-destructive shrink-0 mt-0.5" />
-              <span className="text-destructive text-sm font-medium">{error}</span>
+            <div className="bg-destructive/15 border border-destructive/30 rounded-xl px-4 py-3 text-destructive text-sm font-medium">
+              {error}
             </div>
           )}
 
           <button
             onClick={handleSubmit}
-            disabled={recordSaleMutation.isPending || selectedPrice === 0}
-            className="btn-amber w-full text-lg font-bold py-4 flex items-center justify-center gap-2"
+            disabled={recordSaleMutation.isPending || !isPriceValid}
+            className="btn-amber w-full text-lg font-bold py-4 flex items-center justify-center gap-2 disabled:opacity-50"
           >
             {recordSaleMutation.isPending ? (
               <>
                 <Loader2 className="w-5 h-5 animate-spin" />
-                Recording Sale...
+                Qeyd edilir...
               </>
+            ) : isPriceValid ? (
+              `Təsdiq et — ${(selectedQuantity * effectivePrice).toFixed(2)} AZN`
             ) : (
-              'Confirm Sale'
+              'Qiymət daxil edin'
             )}
           </button>
 
           <button
-            onClick={() => {
-              setStep('quantity');
-              setError('');
-            }}
+            onClick={() => setStep('quantity')}
             className="text-muted-foreground text-sm underline text-center"
           >
-            ← Change quantity
+            ← Miqdarı dəyiş
           </button>
         </div>
       )}

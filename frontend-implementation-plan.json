@@ -1,188 +1,125 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Shop Inventory POS Frontend Implementation",
+  "title": "Improve Daily Sales Report & Add Product Management",
   "requirements": [
     {
-      "id": "REQ-6",
-      "summary": "Build main dashboard with 5 navigation buttons for Add Stock, Record Sale, View Inventory, Daily Sales Report, and Reset Inventory",
+      "id": "REQ-26",
+      "summary": "Update DailySalesReport.tsx to display enriched Z-report data with per-product profit and revenue calculations",
       "acceptanceCriteria": [
-        "All 5 buttons are visible on the home screen",
-        "Buttons are large enough for easy thumb-tap on a mobile screen",
-        "Tapping each button navigates to the correct flow or triggers password prompt where required"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/pages/Dashboard.tsx",
-          "operation": "create",
-          "description": "Create main dashboard page component with 5 large, mobile-friendly navigation buttons: Add Stock, Record Sale, View Inventory, Daily Sales Report, Reset Inventory. Use full-width button layout with generous padding. Each button navigates to its respective route using React Router."
-        },
-        {
-          "path": "frontend/src/App.tsx",
-          "operation": "modify",
-          "description": "Configure React Router with routes for dashboard (/) and all feature screens. Import and wire Dashboard component as the home route."
-        }
-      ]
-    },
-    {
-      "id": "REQ-7",
-      "summary": "Build Add Stock flow with product selection, quantity buttons (+10, +20, +50), price selection (0.50, 0.60, 0.70 + manual input), and confirmation",
-      "acceptanceCriteria": [
-        "User can complete the full add stock flow using only button taps (except optional manual price input)",
-        "All 5 products appear as selectable buttons",
-        "Quantity buttons show +10, +20, +50",
-        "Price buttons show 0.50, 0.60, 0.70 with an additional manual input field",
-        "Submitting calls the backend add stock function and shows a success message",
-        "User can navigate back to home after completion"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/pages/AddStock.tsx",
-          "operation": "create",
-          "description": "Create multi-step Add Stock flow page. Step 1: Display 5 product buttons (Marlboro Silver, Marlboro Gold, Parliament Silver, Parliament Platinium, Parliament Superslim). Step 2: Show quantity buttons (+10, +20, +50). Step 3: Show price buttons (0.50, 0.60, 0.70) and a manual numeric input field. Step 4: Confirmation screen. Call backend.addStock() with selected product name, quantity (as bigint), and price (as number). Display success message after backend call completes. Include back button in header."
-        },
-        {
-          "path": "frontend/src/App.tsx",
-          "operation": "modify",
-          "description": "Add route /add-stock that renders the AddStock page component."
-        }
-      ]
-    },
-    {
-      "id": "REQ-8",
-      "summary": "Build Record Sale flow with product selection, quantity buttons (-1, -2, -5, -10), selling price buttons (9, 10, 11, 12 AZN), and confirmation with error handling for insufficient stock",
-      "acceptanceCriteria": [
-        "User can complete the full sale flow using only button taps",
-        "All 5 products appear as selectable buttons",
-        "Quantity buttons show -1, -2, -5, -10",
-        "Selling price buttons show 9 AZN, 10 AZN, 11 AZN, 12 AZN",
-        "If stock is insufficient, display a clear error message and do not submit",
-        "Successful sale shows a confirmation message and returns to home"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/pages/RecordSale.tsx",
-          "operation": "create",
-          "description": "Create multi-step Record Sale flow page. Step 1: Display 5 product buttons. Step 2: Show quantity buttons (-1, -2, -5, -10). Step 3: Show selling price buttons (9 AZN, 10 AZN, 11 AZN, 12 AZN). Step 4: Confirmation. Call backend.recordSale() with product name, quantity (as positive bigint), selling price (as number), and timestamp (Date.now() as bigint). Catch backend errors for insufficient stock and display error message. Show success confirmation on completion. Include back button."
-        },
-        {
-          "path": "frontend/src/App.tsx",
-          "operation": "modify",
-          "description": "Add route /record-sale that renders the RecordSale page component."
-        }
-      ]
-    },
-    {
-      "id": "REQ-9",
-      "summary": "Build password-protected Inventory View screen showing all 5 products with current stock quantities",
-      "acceptanceCriteria": [
-        "Password prompt appears before showing inventory",
-        "Correct password (gulserxan) grants access to the inventory list",
-        "Inventory shows all 5 products with their current stock quantities",
-        "Wrong password shows an error and does not reveal inventory",
-        "Password is validated client-side"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/pages/ViewInventory.tsx",
-          "operation": "create",
-          "description": "Create password-protected inventory view page. Show password input prompt on mount. Validate password === 'gulserxan' client-side. On correct password, fetch and display list of all 5 products with their current stock quantities (query backend for product data). Show error message for wrong password. Include back button."
-        },
-        {
-          "path": "frontend/src/App.tsx",
-          "operation": "modify",
-          "description": "Add route /view-inventory that renders the ViewInventory page component."
-        }
-      ]
-    },
-    {
-      "id": "REQ-10",
-      "summary": "Build password-protected Daily Sales Report screen showing today's sales summary per product and total revenue",
-      "acceptanceCriteria": [
-        "Password prompt appears before showing the report",
-        "Correct password grants access to the daily report",
-        "Report shows each product sold today with quantity sold and revenue",
-        "Total revenue for the day is displayed",
-        "If no sales today, shows a clear 'No sales today' message",
-        "Wrong password shows an error"
+        "Each product row shows: name, qty sold, selling price, buy price, revenue, profit",
+        "A summary section at the bottom shows total quantity sold, total revenue, total profit",
+        "All monetary values are formatted to 2 decimal places with AZN suffix",
+        "If no sales exist for today, a message like 'No sales recorded today' is shown"
       ],
       "file_operations": [
         {
           "path": "frontend/src/pages/DailySalesReport.tsx",
-          "operation": "create",
-          "description": "Create password-protected daily sales report page. Show password input prompt. Validate password === 'gulserxan' client-side. On correct password, call backend.getTodaySales() which returns Array<[string, bigint, number]> (product name, total quantity sold, total revenue). Display list of products sold today with their quantities and revenue. Calculate and display total revenue for the day. Show 'No sales today' if array is empty. Show error for wrong password. Include back button."
-        },
-        {
-          "path": "frontend/src/App.tsx",
           "operation": "modify",
-          "description": "Add route /daily-sales-report that renders the DailySalesReport page component."
+          "description": "Update the component to consume and display the enriched ZReport data structure returned by getZReport. Display per-product rows with productName, quantitySold, sellingPrice, purchasePrice, revenue, and profit. Add a summary section showing totalQuantitySold, totalRevenue, and totalProfit. Format all monetary values to 2 decimal places with AZN suffix. Handle empty state when no sales exist for today."
         }
       ]
     },
     {
-      "id": "REQ-11",
-      "summary": "Build Admin Reset flow with password protection and confirmation dialog to reset all stock quantities to zero",
+      "id": "REQ-28",
+      "summary": "Add mutation hooks for adding and deleting products in useQueries.ts",
       "acceptanceCriteria": [
-        "Password prompt appears before showing reset option",
-        "Correct password reveals a confirmation dialog with a clear warning",
-        "User must confirm before the reset is executed",
-        "After reset, all product stock quantities show as 0",
-        "Wrong password shows an error and does not reset"
+        "useAddProduct mutation calls actor.addProduct(name) and invalidates stock and sales queries on success",
+        "useDeleteProduct mutation calls actor.deleteProduct(name) and invalidates stock and sales queries on success",
+        "Both hooks expose isPending, isError, and error states for UI feedback"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/pages/ResetInventory.tsx",
-          "operation": "create",
-          "description": "Create admin reset page with password protection. Step 1: Show password input, validate password === 'gulserxan' client-side. Step 2: On correct password, show confirmation dialog warning that all stock will be reset to zero. Step 3: On user confirmation, call backend.resetStocks(). Display success message after reset completes. Show error for wrong password. Include back button."
-        },
-        {
-          "path": "frontend/src/App.tsx",
+          "path": "frontend/src/hooks/useQueries.ts",
           "operation": "modify",
-          "description": "Add route /reset-inventory that renders the ResetInventory page component."
+          "description": "Add useAddProduct mutation hook that calls actor.addProduct(name) and invalidates stockLevels, salesHistory, and zReport queries on success. Add useDeleteProduct mutation hook that calls actor.deleteProduct(name) and invalidates the same queries on success. Both hooks must expose isPending, isError, and error states for UI feedback."
         }
       ]
     },
     {
-      "id": "REQ-12",
-      "summary": "Apply dark-themed visual design with amber accent, large mobile-friendly buttons, consistent header with back navigation, and mobile-first single-column layout",
+      "id": "REQ-29",
+      "summary": "Create password-protected ProductManagement page with add and delete product capabilities",
       "acceptanceCriteria": [
-        "Dark theme is applied consistently across all screens",
-        "Buttons have large tap targets (minimum 48px height) with rounded corners",
-        "Amber/orange accent color is used for primary action buttons",
-        "Font size is large and readable on small mobile screens",
-        "All screens use a single-column mobile-first layout",
-        "Sub-screens have a back button to return to the dashboard"
+        "Page is reachable from the Dashboard via a 'Manage Products' button",
+        "Page shows a PasswordGate before revealing content",
+        "After authentication, a text input and 'Add Product' button are visible",
+        "Submitting a valid product name calls useAddProduct and shows a success message",
+        "Each product in the list has a delete button; tapping it shows an inline confirmation",
+        "Confirming deletion calls useDeleteProduct and the product disappears from the list",
+        "Error messages are shown if add or delete fails (e.g., duplicate name, product not found)",
+        "The product list is fetched from getStockLevels and refreshes after add/delete"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/index.css",
-          "operation": "modify",
-          "description": "Define dark theme CSS variables: near-black or very dark gray background (e.g., #0a0a0a or #1a1a1a), high-contrast white/light-gray text (#ffffff or #f5f5f5), and warm amber/orange accent color (e.g., #f59e0b or #fb923c) for primary actions. Set base font size large for mobile readability (16px minimum). Apply to :root and body."
-        },
-        {
-          "path": "frontend/tailwind.config.js",
-          "operation": "modify",
-          "description": "Extend Tailwind theme to include custom dark background colors, amber accent color, and large button sizing utilities. Configure minimum button height (48px) and generous padding for mobile tap targets."
-        },
-        {
-          "path": "frontend/src/components/Header.tsx",
+          "path": "frontend/src/pages/ProductManagement.tsx",
           "operation": "create",
-          "description": "Create reusable Header component displaying app name 'Shop Inventory POS' and a back button (when not on dashboard). Use dark background and amber accent for app name. Include React Router navigation for back button."
-        },
+          "description": "Create a new page component wrapped with PasswordGate (password: 'gulserxan'). After authentication, render a form with a text input and 'Add Product' button that calls useAddProduct. Below the form, fetch and display all products from useStockLevels. For each product, show the name and a delete (trash) button. Clicking delete shows an inline confirmation prompt; confirming calls useDeleteProduct. Display success and error feedback for both add and delete operations using toasts or inline messages. Use mobile-first styling matching existing dashboard buttons. All labels in English."
+        }
+      ]
+    },
+    {
+      "id": "REQ-30",
+      "summary": "Add 'Manage Products' navigation button to Dashboard",
+      "acceptanceCriteria": [
+        "Dashboard renders a 'Manage Products' button alongside existing action buttons",
+        "Tapping the button navigates to the ProductManagement page",
+        "Button matches the styling (size, padding, rounded corners) of other dashboard buttons"
+      ],
+      "file_operations": [
         {
-          "path": "frontend/src/components/Layout.tsx",
-          "operation": "create",
-          "description": "Create Layout wrapper component with Header and main content area. Apply dark background, single-column mobile-first layout, and consistent padding. Use this layout in App.tsx to wrap all routes."
-        },
+          "path": "frontend/src/pages/Dashboard.tsx",
+          "operation": "modify",
+          "description": "Add a new 'Manage Products' button to the dashboard navigation list. The button must follow the same full-width, large, mobile-first styling as existing dashboard buttons (using btn-amber or btn-secondary classes). Wire the button to navigate to /product-management route using TanStack Router Link component."
+        }
+      ]
+    },
+    {
+      "id": "REQ-31",
+      "summary": "Register ProductManagement route in App.tsx",
+      "acceptanceCriteria": [
+        "A route for /product-management (or equivalent) is defined in the TanStack Router config",
+        "The route renders the ProductManagement component",
+        "The back button in the header navigates back to the Dashboard from this page"
+      ],
+      "file_operations": [
         {
           "path": "frontend/src/App.tsx",
           "operation": "modify",
-          "description": "Wrap all routes with Layout component to apply consistent dark theme, header, and mobile-first structure across all pages."
+          "description": "Add a new route definition for /product-management in the TanStack Router configuration. The route must render the ProductManagement component. Ensure the route is wrapped in the shared Layout so the Header back button functions correctly."
+        }
+      ]
+    },
+    {
+      "id": "REQ-32",
+      "summary": "Update all product selection pages to dynamically fetch products from getStockLevels instead of using hardcoded arrays",
+      "acceptanceCriteria": [
+        "AddStock product selection step shows buttons for all products returned by getStockLevels",
+        "RecordSale product selection step shows buttons for all products returned by getStockLevels",
+        "ViewInventory list shows all products returned by getStockLevels",
+        "SalesHistory product filter includes all products returned by getStockLevels",
+        "No page references a hardcoded static array of product names",
+        "After a product is added or deleted via ProductManagement, the menus reflect the change on next data fetch"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/AddStock.tsx",
+          "operation": "modify",
+          "description": "Replace any hardcoded product name arrays with a dynamic fetch from useStockLevels. Render product selection buttons based on the fetched product list. Ensure the product list refreshes after products are added or deleted in ProductManagement."
         },
         {
-          "path": "frontend/public/assets/generated/shop-logo.dim_256x256.png",
-          "operation": "create",
-          "description": "Wire the generated shop logo icon (simple stylized cash register or shop bag silhouette on dark background with warm amber accent) into the Header component. Reference this file path in Header.tsx to display the logo next to the app name."
+          "path": "frontend/src/pages/RecordSale.tsx",
+          "operation": "modify",
+          "description": "Replace any hardcoded product name arrays with a dynamic fetch from useStockLevels. Render product selection buttons based on the fetched product list. Ensure the product list refreshes after products are added or deleted in ProductManagement."
+        },
+        {
+          "path": "frontend/src/pages/ViewInventory.tsx",
+          "operation": "modify",
+          "description": "Ensure the product list displayed is dynamically fetched from useStockLevels (already implemented). Verify that newly added products appear and deleted products disappear after query invalidation."
+        },
+        {
+          "path": "frontend/src/pages/SalesHistory.tsx",
+          "operation": "modify",
+          "description": "Replace any hardcoded product name arrays in the product filter dropdown with a dynamic fetch from useStockLevels. Ensure the filter options update after products are added or deleted in ProductManagement."
         }
       ]
     }

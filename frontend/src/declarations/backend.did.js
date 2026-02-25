@@ -9,32 +9,82 @@
 import { IDL } from '@icp-sdk/core/candid';
 
 export const Time = IDL.Int;
+export const ZReportProduct = IDL.Record({
+  'purchasePrice' : IDL.Float64,
+  'revenue' : IDL.Float64,
+  'sellingPrice' : IDL.Float64,
+  'productName' : IDL.Text,
+  'quantitySold' : IDL.Nat,
+  'profit' : IDL.Float64,
+});
+export const ZReport = IDL.Record({
+  'totalProfit' : IDL.Float64,
+  'totalRevenue' : IDL.Float64,
+  'products' : IDL.Vec(ZReportProduct),
+  'totalQuantity' : IDL.Nat,
+});
 
 export const idlService = IDL.Service({
-  'addStock' : IDL.Func([IDL.Text, IDL.Nat, IDL.Float64], [], []),
-  'getTodaySales' : IDL.Func(
+  'addProduct' : IDL.Func([IDL.Text], [IDL.Bool], []),
+  'addStock' : IDL.Func([IDL.Text, IDL.Nat, IDL.Float64], [IDL.Bool], []),
+  'deleteProduct' : IDL.Func([IDL.Text], [IDL.Bool], []),
+  'getSalesHistory' : IDL.Func(
       [],
-      [IDL.Vec(IDL.Tuple(IDL.Text, IDL.Nat, IDL.Float64))],
+      [IDL.Vec(IDL.Tuple(IDL.Text, IDL.Nat, IDL.Float64, Time))],
       ['query'],
     ),
-  'recordSale' : IDL.Func([IDL.Text, IDL.Nat, IDL.Float64, Time], [], []),
-  'resetStocks' : IDL.Func([], [], []),
+  'getStockLevels' : IDL.Func(
+      [],
+      [IDL.Vec(IDL.Tuple(IDL.Text, IDL.Nat))],
+      ['query'],
+    ),
+  'getZReport' : IDL.Func([], [ZReport], ['query']),
+  'recordSale' : IDL.Func(
+      [IDL.Text, IDL.Nat, IDL.Float64, Time],
+      [IDL.Bool],
+      [],
+    ),
 });
 
 export const idlInitArgs = [];
 
 export const idlFactory = ({ IDL }) => {
   const Time = IDL.Int;
+  const ZReportProduct = IDL.Record({
+    'purchasePrice' : IDL.Float64,
+    'revenue' : IDL.Float64,
+    'sellingPrice' : IDL.Float64,
+    'productName' : IDL.Text,
+    'quantitySold' : IDL.Nat,
+    'profit' : IDL.Float64,
+  });
+  const ZReport = IDL.Record({
+    'totalProfit' : IDL.Float64,
+    'totalRevenue' : IDL.Float64,
+    'products' : IDL.Vec(ZReportProduct),
+    'totalQuantity' : IDL.Nat,
+  });
   
   return IDL.Service({
-    'addStock' : IDL.Func([IDL.Text, IDL.Nat, IDL.Float64], [], []),
-    'getTodaySales' : IDL.Func(
+    'addProduct' : IDL.Func([IDL.Text], [IDL.Bool], []),
+    'addStock' : IDL.Func([IDL.Text, IDL.Nat, IDL.Float64], [IDL.Bool], []),
+    'deleteProduct' : IDL.Func([IDL.Text], [IDL.Bool], []),
+    'getSalesHistory' : IDL.Func(
         [],
-        [IDL.Vec(IDL.Tuple(IDL.Text, IDL.Nat, IDL.Float64))],
+        [IDL.Vec(IDL.Tuple(IDL.Text, IDL.Nat, IDL.Float64, Time))],
         ['query'],
       ),
-    'recordSale' : IDL.Func([IDL.Text, IDL.Nat, IDL.Float64, Time], [], []),
-    'resetStocks' : IDL.Func([], [], []),
+    'getStockLevels' : IDL.Func(
+        [],
+        [IDL.Vec(IDL.Tuple(IDL.Text, IDL.Nat))],
+        ['query'],
+      ),
+    'getZReport' : IDL.Func([], [ZReport], ['query']),
+    'recordSale' : IDL.Func(
+        [IDL.Text, IDL.Nat, IDL.Float64, Time],
+        [IDL.Bool],
+        [],
+      ),
   });
 };
 
