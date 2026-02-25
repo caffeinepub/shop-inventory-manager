@@ -1,218 +1,75 @@
 {
   "kind": "build_request",
-  "title": "Improve Daily Sales Report & Add Product Management",
-  "projectName": "Shop POS",
-  "priority": "normal",
+  "title": "Fix Admin Reset (Anbarı Sıfırla) — wire up backend resetInventory function",
+  "priority": "high",
   "requirements": [
     {
-      "id": "REQ-25",
-      "text": "Extend the backend getZReport (and any daily sales query) to return, for each product sold today: product name, quantity sold, selling price, purchase price (last known buy price), revenue (quantity × selling price), and profit (quantity × (selling price - purchase price)). Also return totals: total daily revenue, total daily profit, and total quantity sold across all products.",
+      "id": "REQ-34",
+      "text": "Implement a resetInventory function in the Motoko backend actor that sets all product stock quantities to zero and persists the change in stable storage. The function must return a success result.",
       "target": "backend",
       "source": {
         "messageIds": [
-          "msg-last"
+          "msg-user-3"
         ],
         "quotes": [
-          "Show quantity sold per product",
-          "Show selling price",
-          "Calculate total revenue",
-          "Calculate profit (sell price - buy price)",
-          "Show total daily revenue",
-          "Show total daily profit",
-          "Show total quantity sold"
+          "anbari sifirlanin parolu nedi?",
+          "parolu yazib daxil ol basannan sora bele yazir 'Bu funksiya hal-hazırda mövcud deyil'"
         ]
       },
       "acceptanceCriteria": [
-        "getZReport returns per-product rows each containing: productName, quantitySold, sellingPrice, purchasePrice, revenue, profit",
-        "getZReport returns aggregate fields: totalRevenue, totalProfit, totalQuantitySold",
-        "Profit per product is calculated as quantity × (sellingPrice - purchasePrice)",
-        "The last known purchase price for each product is read from the products stable map"
+        "A resetInventory() function exists in backend/main.mo",
+        "Calling resetInventory sets every product's stock quantity to 0 in the stable products map",
+        "The function returns a success result (e.g., #ok)",
+        "The Candid interface exposes resetInventory so the frontend can call it"
       ]
     },
     {
-      "id": "REQ-26",
-      "text": "Update DailySalesReport.tsx to display the enriched report data returned by getZReport. For each product sold today, show: product name, quantity sold, selling price (AZN), purchase price (AZN), revenue (AZN), and profit (AZN). Below the per-product list, show summary totals: Total Quantity Sold, Total Daily Revenue, and Total Daily Profit. All labels in English.",
+      "id": "REQ-35",
+      "text": "Update ResetInventory.tsx to remove the 'feature not implemented' placeholder and instead call the backend resetInventory function after the user passes the password gate and confirms the reset dialog. Show a success message in Azerbaijani on completion and an error message if the call fails.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-last"
+          "msg-user-3"
         ],
         "quotes": [
-          "Show quantity sold per product",
-          "Show selling price",
-          "Calculate total revenue",
-          "Calculate profit (sell price - buy price)",
-          "Show total daily revenue",
-          "Show total daily profit",
-          "Show total quantity sold"
+          "Bu funksiya hal-hazırda mövcud deyil",
+          "Anbarı sıfırlamaq funksiyası bu versiyada dəstəklənmir"
         ]
       },
       "acceptanceCriteria": [
-        "Each product row shows: name, qty sold, selling price, buy price, revenue, profit",
-        "A summary section at the bottom shows total quantity sold, total revenue, total profit",
-        "All monetary values are formatted to 2 decimal places with AZN suffix",
-        "If no sales exist for today, a message like 'No sales recorded today' is shown"
+        "ResetInventory.tsx no longer shows the 'Bu funksiya hal-hazırda mövcud deyil' notice",
+        "After correct password entry and confirmation, the frontend calls the backend resetInventory function",
+        "A success message is displayed in Azerbaijani (e.g., 'Anbar uğurla sıfırlandı') upon a successful reset",
+        "An error message is shown in Azerbaijani if the backend call fails",
+        "After reset, stock levels reflect 0 for all products when viewed in the inventory screen"
       ]
     },
     {
-      "id": "REQ-27",
-      "text": "Add backend functions for product management: (1) addProduct(name: Text) — adds a new product with zero stock and zero purchase price to the stable products map, returning an error if the name already exists; (2) deleteProduct(name: Text) — removes the product from the stable products map and removes all associated sale records from the stable sales list, returning an error if the product does not exist.",
-      "target": "backend",
-      "source": {
-        "messageIds": [
-          "msg-last"
-        ],
-        "quotes": [
-          "Add product manually",
-          "Added products must appear permanently in menus",
-          "Ability to delete products",
-          "Deleted products must be removed from inventory and menus"
-        ]
-      },
-      "acceptanceCriteria": [
-        "addProduct accepts a product name string and persists it in stable storage with quantity=0 and purchasePrice=0",
-        "addProduct returns an error variant if the product name already exists",
-        "deleteProduct removes the product entry from the stable products map",
-        "deleteProduct also removes all sale records for that product from the stable sales list",
-        "deleteProduct returns an error variant if the product name is not found",
-        "getStockLevels and getZReport reflect added/deleted products immediately after the call"
-      ]
-    },
-    {
-      "id": "REQ-28",
-      "text": "Add React Query mutation hooks useAddProduct and useDeleteProduct in useQueries.ts that call the backend addProduct and deleteProduct functions respectively. On success, invalidate all relevant queries (stock levels, sales history, Z-report).",
+      "id": "REQ-36",
+      "text": "Add a useResetInventory mutation hook in useQueries.ts that calls the backend resetInventory function. On success, invalidate the stockLevels, salesHistory, and zReport queries so all screens reflect the updated (zeroed) state.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-last"
-        ],
-        "quotes": [
-          "Add product manually",
-          "Ability to delete products"
+          "msg-user-3"
         ]
       },
       "acceptanceCriteria": [
-        "useAddProduct mutation calls actor.addProduct(name) and invalidates stock and sales queries on success",
-        "useDeleteProduct mutation calls actor.deleteProduct(name) and invalidates stock and sales queries on success",
-        "Both hooks expose isPending, isError, and error states for UI feedback"
-      ]
-    },
-    {
-      "id": "REQ-29",
-      "text": "Create a new Product Management page (ProductManagement.tsx) accessible from the Dashboard via a new 'Manage Products' button. The page must be password-protected (password: 'gulserxan'). After authentication, display: (1) a text input field and an 'Add Product' button to add a new product by name; (2) a list of all current products (fetched via getStockLevels) each with a delete (trash) button. Confirm deletion with an inline confirmation prompt before calling deleteProduct. Show success and error feedback for both add and delete actions. All labels in English.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-last"
-        ],
-        "quotes": [
-          "Add a product management section.",
-          "Add product manually",
-          "Added products must appear permanently in menus",
-          "Ability to delete products",
-          "Deleted products must be removed from inventory and menus"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Page is reachable from the Dashboard via a 'Manage Products' button",
-        "Page shows a PasswordGate before revealing content",
-        "After authentication, a text input and 'Add Product' button are visible",
-        "Submitting a valid product name calls useAddProduct and shows a success message",
-        "Each product in the list has a delete button; tapping it shows an inline confirmation",
-        "Confirming deletion calls useDeleteProduct and the product disappears from the list",
-        "Error messages are shown if add or delete fails (e.g., duplicate name, product not found)",
-        "The product list is fetched from getStockLevels and refreshes after add/delete"
-      ]
-    },
-    {
-      "id": "REQ-30",
-      "text": "Update the Dashboard (Dashboard.tsx) to include a new 'Manage Products' navigation button that routes to the ProductManagement page. The button must follow the same full-width, large, mobile-first styling as existing dashboard buttons.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-last"
-        ],
-        "quotes": [
-          "Add a product management section."
-        ]
-      },
-      "acceptanceCriteria": [
-        "Dashboard renders a 'Manage Products' button alongside existing action buttons",
-        "Tapping the button navigates to the ProductManagement page",
-        "Button matches the styling (size, padding, rounded corners) of other dashboard buttons"
-      ]
-    },
-    {
-      "id": "REQ-31",
-      "text": "Update App.tsx to register a route for the ProductManagement page (e.g., /product-management).",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-last"
-        ],
-        "quotes": [
-          "Add a product management section."
-        ]
-      },
-      "acceptanceCriteria": [
-        "A route for /product-management (or equivalent) is defined in the TanStack Router config",
-        "The route renders the ProductManagement component",
-        "The back button in the header navigates back to the Dashboard from this page"
-      ]
-    },
-    {
-      "id": "REQ-32",
-      "text": "Ensure the AddStock, RecordSale, ViewInventory, SalesHistory, and DailySalesReport pages dynamically fetch the current product list (via getStockLevels) and render product selection buttons for all products currently in stable storage — including newly added products and excluding deleted ones. Remove any hardcoded product name arrays from these pages.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-last"
-        ],
-        "quotes": [
-          "Added products must appear permanently in menus",
-          "Deleted products must be removed from inventory and menus"
-        ]
-      },
-      "acceptanceCriteria": [
-        "AddStock product selection step shows buttons for all products returned by getStockLevels",
-        "RecordSale product selection step shows buttons for all products returned by getStockLevels",
-        "ViewInventory list shows all products returned by getStockLevels",
-        "SalesHistory product filter includes all products returned by getStockLevels",
-        "No page references a hardcoded static array of product names",
-        "After a product is added or deleted via ProductManagement, the menus reflect the change on next data fetch"
-      ]
-    },
-    {
-      "id": "REQ-33",
-      "text": "Generate a migration module (migration.mo) that preserves all existing stable data (products map and sales list) when upgrading the canister to the new version that adds the addProduct and deleteProduct functions.",
-      "target": "backend",
-      "source": {
-        "messageIds": [
-          "msg-last"
-        ],
-        "quotes": [
-          "Added products must appear permanently in menus"
-        ]
-      },
-      "acceptanceCriteria": [
-        "migration.mo defines OldActor with the previous stable state shape",
-        "migration.mo defines NewActor with the updated stable state shape",
-        "The run function copies products and sales from old to new state without data loss",
-        "No existing stock quantities or sale records are lost after canister upgrade"
+        "useResetInventory is exported from useQueries.ts",
+        "It calls the backend actor's resetInventory function as a mutation",
+        "On success, it invalidates stockLevels, salesHistory, and zReport queries",
+        "ResetInventory.tsx uses this hook to trigger the reset"
       ]
     }
   ],
   "constraints": [
-    "All Motoko logic must remain in the single backend/main.mo actor file",
-    "Do not modify files listed in frontend.immutablePaths",
-    "Password validation remains client-side only (password: 'gulserxan')",
-    "Monetary values must be formatted to 2 decimal places"
+    "All Motoko logic must remain in backend/main.mo (single-actor architecture)",
+    "Do not modify any files listed in frontend.immutablePaths",
+    "Password validation ('gulserxan') is handled client-side in the existing PasswordGate component — do not add password logic to the backend"
   ],
   "nonGoals": [
-    "Changing the existing password or authentication mechanism",
-    "Adding server-side authentication or Internet Identity for product management",
-    "Modifying the WhatsApp Z-report sharing format beyond the new profit/revenue fields",
-    "Adding product categories or images"
+    "Changing the password from 'gulserxan'",
+    "Modifying any other page besides ResetInventory.tsx and useQueries.ts on the frontend",
+    "Resetting sales history records — only stock quantities should be zeroed"
   ],
   "imageRequirements": {
     "required": [],

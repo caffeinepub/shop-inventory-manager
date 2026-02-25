@@ -30,4 +30,5 @@ export interface backendInterface {
     getStockLevels(): Promise<Array<[string, bigint]>>;
     getZReport(): Promise<ZReport>;
     recordSale(productName: string, quantitySold: bigint, sellingPrice: number, timestamp: Time): Promise<boolean>;
+    resetInventory(): Promise<boolean>;
 }

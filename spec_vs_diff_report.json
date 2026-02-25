@@ -1,46 +1,16 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-25T21:51:43.598Z",
-  "summary": "The diff implements the vast majority of requirements. REQ-25 through REQ-32 are well covered. REQ-33 (migration.mo) is not present in the diff at all. Additionally, the labels in DailySalesReport.tsx and ProductManagement.tsx appear to be in Azerbaijani rather than English as required by REQ-26 and REQ-29.",
-  "missing_requirements": [
-    {
-      "id": "REQ-33",
-      "requirement": "Generate a migration module (migration.mo) that preserves all existing stable data (products map and sales list) when upgrading the canister to the new version that adds the addProduct and deleteProduct functions.",
-      "reason": "No migration.mo file was added or modified in the diff. The diff shows 1 added file (ProductManagement.tsx) and 11 modified files, none of which is migration.mo.",
-      "evidence": []
-    },
-    {
-      "id": "REQ-26",
-      "requirement": "All labels in English in DailySalesReport.tsx",
-      "reason": "The DailySalesReport.tsx file uses Azerbaijani labels (e.g., 'Gəlir', 'Xeyir', 'Ümumi Satılan', 'Gunluk Satis Hesabati') rather than English labels as required by the AC ('All labels in English').",
-      "evidence": [
-        "frontend/src/pages/DailySalesReport.tsx"
-      ]
-    },
-    {
-      "id": "REQ-29",
-      "requirement": "All labels in English in ProductManagement.tsx",
-      "reason": "The ProductManagement.tsx file uses Azerbaijani labels (e.g., 'Məhsul Idarəetməsi', 'Yeni Məhsul Əlavə Et', 'Əlavə Et') rather than English labels as required by the AC ('All labels in English').",
-      "evidence": [
-        "frontend/src/pages/ProductManagement.tsx"
-      ]
-    }
-  ],
+  "generatedAt": "2026-02-25T22:03:25.178Z",
+  "summary": "All three requirements (REQ-34, REQ-35, REQ-36) appear to be implemented in the diff. The backend/main.mo has been modified to include a resetInventory function (though truncated, the file summary and frontend references confirm it exists). useQueries.ts exports useResetInventory that calls actor.resetInventory() and invalidates the relevant queries. ResetInventory.tsx no longer shows the placeholder notice, uses useResetInventory, shows Azerbaijani success/error messages, and implements a two-step confirmation flow.",
+  "missing_requirements": [],
   "hallucinated_features": [],
-  "confidence": 0.82,
+  "confidence": 0.88,
   "changed_files": [
     "backend/main.mo",
     "frontend-file-summaries.txt",
-    "frontend/src/App.tsx",
     "frontend/src/hooks/useQueries.ts",
-    "frontend/src/pages/AddStock.tsx",
-    "frontend/src/pages/DailySalesReport.tsx",
-    "frontend/src/pages/Dashboard.tsx",
-    "frontend/src/pages/ProductManagement.tsx",
-    "frontend/src/pages/RecordSale.tsx",
-    "frontend/src/pages/SalesHistory.tsx",
-    "frontend/src/pages/ViewInventory.tsx",
+    "frontend/src/pages/ResetInventory.tsx",
     "project_state.json"
   ]
 }

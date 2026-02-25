@@ -33,6 +33,7 @@ export interface _SERVICE {
   'getStockLevels' : ActorMethod<[], Array<[string, bigint]>>,
   'getZReport' : ActorMethod<[], ZReport>,
   'recordSale' : ActorMethod<[string, bigint, number, Time], boolean>,
+  'resetInventory' : ActorMethod<[], boolean>,
 }
 export declare const idlService: IDL.ServiceClass;
 export declare const idlInitArgs: IDL.Type[];

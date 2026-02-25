@@ -1,125 +1,40 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Improve Daily Sales Report & Add Product Management",
+  "title": "Fix Admin Reset (Anbarı Sıfırla) — wire up backend resetInventory function",
   "requirements": [
     {
-      "id": "REQ-26",
-      "summary": "Update DailySalesReport.tsx to display enriched Z-report data with per-product profit and revenue calculations",
+      "id": "REQ-35",
+      "summary": "Update ResetInventory.tsx to call the backend resetInventory function after password and confirmation, showing Azerbaijani success/error messages",
       "acceptanceCriteria": [
-        "Each product row shows: name, qty sold, selling price, buy price, revenue, profit",
-        "A summary section at the bottom shows total quantity sold, total revenue, total profit",
-        "All monetary values are formatted to 2 decimal places with AZN suffix",
-        "If no sales exist for today, a message like 'No sales recorded today' is shown"
+        "ResetInventory.tsx no longer shows the 'Bu funksiya hal-hazırda mövcud deyil' notice",
+        "After correct password entry and confirmation, the frontend calls the backend resetInventory function",
+        "A success message is displayed in Azerbaijani (e.g., 'Anbar uğurla sıfırlandı') upon a successful reset",
+        "An error message is shown in Azerbaijani if the backend call fails",
+        "After reset, stock levels reflect 0 for all products when viewed in the inventory screen"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/pages/DailySalesReport.tsx",
+          "path": "frontend/src/pages/ResetInventory.tsx",
           "operation": "modify",
-          "description": "Update the component to consume and display the enriched ZReport data structure returned by getZReport. Display per-product rows with productName, quantitySold, sellingPrice, purchasePrice, revenue, and profit. Add a summary section showing totalQuantitySold, totalRevenue, and totalProfit. Format all monetary values to 2 decimal places with AZN suffix. Handle empty state when no sales exist for today."
+          "description": "Replace the placeholder notice with a confirmation dialog and reset logic. After the user passes the PasswordGate and confirms the reset action, call the useResetInventory mutation hook. Display 'Anbar uğurla sıfırlandı' on success and an appropriate error message in Azerbaijani on failure. Remove the 'Bu funksiya hal-hazırda mövcud deyil' text entirely."
         }
       ]
     },
     {
-      "id": "REQ-28",
-      "summary": "Add mutation hooks for adding and deleting products in useQueries.ts",
+      "id": "REQ-36",
+      "summary": "Add useResetInventory mutation hook that calls backend resetInventory and invalidates relevant queries on success",
       "acceptanceCriteria": [
-        "useAddProduct mutation calls actor.addProduct(name) and invalidates stock and sales queries on success",
-        "useDeleteProduct mutation calls actor.deleteProduct(name) and invalidates stock and sales queries on success",
-        "Both hooks expose isPending, isError, and error states for UI feedback"
+        "useResetInventory is exported from useQueries.ts",
+        "It calls the backend actor's resetInventory function as a mutation",
+        "On success, it invalidates stockLevels, salesHistory, and zReport queries",
+        "ResetInventory.tsx uses this hook to trigger the reset"
       ],
       "file_operations": [
         {
           "path": "frontend/src/hooks/useQueries.ts",
           "operation": "modify",
-          "description": "Add useAddProduct mutation hook that calls actor.addProduct(name) and invalidates stockLevels, salesHistory, and zReport queries on success. Add useDeleteProduct mutation hook that calls actor.deleteProduct(name) and invalidates the same queries on success. Both hooks must expose isPending, isError, and error states for UI feedback."
-        }
-      ]
-    },
-    {
-      "id": "REQ-29",
-      "summary": "Create password-protected ProductManagement page with add and delete product capabilities",
-      "acceptanceCriteria": [
-        "Page is reachable from the Dashboard via a 'Manage Products' button",
-        "Page shows a PasswordGate before revealing content",
-        "After authentication, a text input and 'Add Product' button are visible",
-        "Submitting a valid product name calls useAddProduct and shows a success message",
-        "Each product in the list has a delete button; tapping it shows an inline confirmation",
-        "Confirming deletion calls useDeleteProduct and the product disappears from the list",
-        "Error messages are shown if add or delete fails (e.g., duplicate name, product not found)",
-        "The product list is fetched from getStockLevels and refreshes after add/delete"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/pages/ProductManagement.tsx",
-          "operation": "create",
-          "description": "Create a new page component wrapped with PasswordGate (password: 'gulserxan'). After authentication, render a form with a text input and 'Add Product' button that calls useAddProduct. Below the form, fetch and display all products from useStockLevels. For each product, show the name and a delete (trash) button. Clicking delete shows an inline confirmation prompt; confirming calls useDeleteProduct. Display success and error feedback for both add and delete operations using toasts or inline messages. Use mobile-first styling matching existing dashboard buttons. All labels in English."
-        }
-      ]
-    },
-    {
-      "id": "REQ-30",
-      "summary": "Add 'Manage Products' navigation button to Dashboard",
-      "acceptanceCriteria": [
-        "Dashboard renders a 'Manage Products' button alongside existing action buttons",
-        "Tapping the button navigates to the ProductManagement page",
-        "Button matches the styling (size, padding, rounded corners) of other dashboard buttons"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/pages/Dashboard.tsx",
-          "operation": "modify",
-          "description": "Add a new 'Manage Products' button to the dashboard navigation list. The button must follow the same full-width, large, mobile-first styling as existing dashboard buttons (using btn-amber or btn-secondary classes). Wire the button to navigate to /product-management route using TanStack Router Link component."
-        }
-      ]
-    },
-    {
-      "id": "REQ-31",
-      "summary": "Register ProductManagement route in App.tsx",
-      "acceptanceCriteria": [
-        "A route for /product-management (or equivalent) is defined in the TanStack Router config",
-        "The route renders the ProductManagement component",
-        "The back button in the header navigates back to the Dashboard from this page"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/App.tsx",
-          "operation": "modify",
-          "description": "Add a new route definition for /product-management in the TanStack Router configuration. The route must render the ProductManagement component. Ensure the route is wrapped in the shared Layout so the Header back button functions correctly."
-        }
-      ]
-    },
-    {
-      "id": "REQ-32",
-      "summary": "Update all product selection pages to dynamically fetch products from getStockLevels instead of using hardcoded arrays",
-      "acceptanceCriteria": [
-        "AddStock product selection step shows buttons for all products returned by getStockLevels",
-        "RecordSale product selection step shows buttons for all products returned by getStockLevels",
-        "ViewInventory list shows all products returned by getStockLevels",
-        "SalesHistory product filter includes all products returned by getStockLevels",
-        "No page references a hardcoded static array of product names",
-        "After a product is added or deleted via ProductManagement, the menus reflect the change on next data fetch"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/pages/AddStock.tsx",
-          "operation": "modify",
-          "description": "Replace any hardcoded product name arrays with a dynamic fetch from useStockLevels. Render product selection buttons based on the fetched product list. Ensure the product list refreshes after products are added or deleted in ProductManagement."
-        },
-        {
-          "path": "frontend/src/pages/RecordSale.tsx",
-          "operation": "modify",
-          "description": "Replace any hardcoded product name arrays with a dynamic fetch from useStockLevels. Render product selection buttons based on the fetched product list. Ensure the product list refreshes after products are added or deleted in ProductManagement."
-        },
-        {
-          "path": "frontend/src/pages/ViewInventory.tsx",
-          "operation": "modify",
-          "description": "Ensure the product list displayed is dynamically fetched from useStockLevels (already implemented). Verify that newly added products appear and deleted products disappear after query invalidation."
-        },
-        {
-          "path": "frontend/src/pages/SalesHistory.tsx",
-          "operation": "modify",
-          "description": "Replace any hardcoded product name arrays in the product filter dropdown with a dynamic fetch from useStockLevels. Ensure the filter options update after products are added or deleted in ProductManagement."
+          "description": "Add and export a useResetInventory mutation hook using useMutation from TanStack Query. The mutation function should call actor.resetInventory(). On success, invalidate the 'stockLevels', 'salesHistory', and 'zReport' query keys using queryClient.invalidateQueries to ensure all dependent screens reflect the updated (zeroed) inventory state."
         }
       ]
     }

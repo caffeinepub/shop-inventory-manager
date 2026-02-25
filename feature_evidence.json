@@ -2,10 +2,10 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-update-dailysalesreport-tsx-to-display-the-enriched-report-data-returned-by-getzreport-for-each-product-sold-today-show-product-name-quantity-sold-selling-price-azn-purchase-price-azn-revenue-azn-and-profit-azn-below-the-per-product-list-show-summary-totals-total-quantity-sold-total-daily-revenue-and-total-daily-profit-all-labels-in-english",
-      "featureTitle": "Update DailySalesReport.tsx to display the enriched report data returned by getZReport. For each product sold today, show: product name, quantity sold, selling price (AZN), purchase price (AZN), revenue (AZN), and profit (AZN). Below the per-product list, show summary totals: Total Quantity Sold, Total Daily Revenue, and Total Daily Profit. All labels in English.",
+      "featureId": "feature-update-resetinventory-tsx-to-remove-the-feature-not-implemented-placeholder-and-instead-call-the-backend-resetinventory-function-after-the-user-passes-the-password-gate-and-confirms-the-reset-dialog-show-a-success-message-in-azerbaijani-on-completion-and-an-error-message-if-the-call-fails",
+      "featureTitle": "Update ResetInventory.tsx to remove the 'feature not implemented' placeholder and instead call the backend resetInventory function after the user passes the password gate and confirms the reset dialog. Show a success message in Azerbaijani on completion and an error message if the call fails.",
       "files": [
-        "frontend/src/pages/DailySalesReport.tsx"
+        "frontend/src/pages/ResetInventory.tsx"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -15,13 +15,13 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-26"
+        "REQ-35"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-add-react-query-mutation-hooks-useaddproduct-and-usedeleteproduct-in-usequeries-ts-that-call-the-backend-addproduct-and-deleteproduct-functions-respectively-on-success-invalidate-all-relevant-queries-stock-levels-sales-history-z-report",
-      "featureTitle": "Add React Query mutation hooks useAddProduct and useDeleteProduct in useQueries.ts that call the backend addProduct and deleteProduct functions respectively. On success, invalidate all relevant queries (stock levels, sales history, Z-report).",
+      "featureId": "feature-add-a-useresetinventory-mutation-hook-in-usequeries-ts-that-calls-the-backend-resetinventory-function-on-success-invalidate-the-stocklevels-saleshistory-and-zreport-queries-so-all-screens-reflect-the-updated-zeroed-state",
+      "featureTitle": "Add a useResetInventory mutation hook in useQueries.ts that calls the backend resetInventory function. On success, invalidate the stockLevels, salesHistory, and zReport queries so all screens reflect the updated (zeroed) state.",
       "files": [
         "frontend/src/hooks/useQueries.ts"
       ],
@@ -33,82 +33,7 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-28"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-create-a-new-product-management-page-productmanagement-tsx-accessible-from-the-dashboard-via-a-new-manage-products-button-the-page-must-be-password-protected-password-gulserxan-after-authentication-display-1-a-text-input-field-and-an-add-product-button-to-add-a-new-product-by-name-2-a-list-of-all-current-products-fetched-via-getstocklevels-each-with-a-delete-trash-button-confirm-deletion-with-an-inline-confirmation-prompt-before-calling-deleteproduct-show-success-and-error-feedback-for-both-add-and-delete-actions-all-labels-in-english",
-      "featureTitle": "Create a new Product Management page (ProductManagement.tsx) accessible from the Dashboard via a new 'Manage Products' button. The page must be password-protected (password: 'gulserxan'). After authentication, display: (1) a text input field and an 'Add Product' button to add a new product by name; (2) a list of all current products (fetched via getStockLevels) each with a delete (trash) button. Confirm deletion with an inline confirmation prompt before calling deleteProduct. Show success and error feedback for both add and delete actions. All labels in English.",
-      "files": [
-        "frontend/src/pages/ProductManagement.tsx"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-29"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-update-the-dashboard-dashboard-tsx-to-include-a-new-manage-products-navigation-button-that-routes-to-the-productmanagement-page-the-button-must-follow-the-same-full-width-large-mobile-first-styling-as-existing-dashboard-buttons",
-      "featureTitle": "Update the Dashboard (Dashboard.tsx) to include a new 'Manage Products' navigation button that routes to the ProductManagement page. The button must follow the same full-width, large, mobile-first styling as existing dashboard buttons.",
-      "files": [
-        "frontend/src/pages/Dashboard.tsx"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-30"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-update-app-tsx-to-register-a-route-for-the-productmanagement-page-e-g-product-management",
-      "featureTitle": "Update App.tsx to register a route for the ProductManagement page (e.g., /product-management).",
-      "files": [
-        "frontend/src/App.tsx"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-31"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-ensure-the-addstock-recordsale-viewinventory-saleshistory-and-dailysalesreport-pages-dynamically-fetch-the-current-product-list-via-getstocklevels-and-render-product-selection-buttons-for-all-products-currently-in-stable-storage-including-newly-added-products-and-excluding-deleted-ones-remove-any-hardcoded-product-name-arrays-from-these-pages",
-      "featureTitle": "Ensure the AddStock, RecordSale, ViewInventory, SalesHistory, and DailySalesReport pages dynamically fetch the current product list (via getStockLevels) and render product selection buttons for all products currently in stable storage — including newly added products and excluding deleted ones. Remove any hardcoded product name arrays from these pages.",
-      "files": [
-        "frontend/src/pages/AddStock.tsx",
-        "frontend/src/pages/RecordSale.tsx",
-        "frontend/src/pages/SalesHistory.tsx",
-        "frontend/src/pages/ViewInventory.tsx"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-32"
+        "REQ-36"
       ],
       "confidence": "high"
     }

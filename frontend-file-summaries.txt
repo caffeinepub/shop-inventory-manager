@@ -1,7 +1,7 @@
 {
   "frontend/src/index.css": "Global styles with OKLCH dark/light theme tokens, amber/orange accent system, Inter + Space Grotesk fonts, mobile-optimized input font-size (16px to prevent iOS auto-zoom), and utility classes for tap-target buttons.",
   "frontend/tailwind.config.js": "Tailwind config extending theme with custom font families (Inter, Space Grotesk), OKLCH color tokens, larger border radii, amber glow shadow, and fade-in animation.",
-  "frontend/src/hooks/useQueries.ts": "React Query hooks for all backend operations — useAddStock, useRecordSale, useStockLevels, useSalesHistory, useZReport (updated to use new ZReport type from backend), useAddProduct, and useDeleteProduct; removed hardcoded PRODUCTS constant.",
+  "frontend/src/hooks/useQueries.ts": "React Query hooks for all backend operations including the new `useResetInventory` mutation that calls `actor.resetInventory()` and invalidates `stockLevels`, `salesHistory`, and `zReport` queries on success.",
   "frontend/src/components/Header.tsx": "Sticky app header in Azerbaijani showing shop logo, app name ('Mağaza Anbarı'), and 'POS İdarəetməsi' subtitle, with back-arrow button on sub-pages.",
   "frontend/src/components/Layout.tsx": "Full-page layout wrapper composing Header, main content area (max-width centered), and footer with caffeine.ai attribution and dynamic year.",
   "frontend/src/components/PasswordGate.tsx": "Reusable password prompt component fully translated to Azerbaijani with show/hide toggle, client-side validation, and mobile-optimized 16px font-size input.",
@@ -10,7 +10,7 @@
   "frontend/src/pages/RecordSale.tsx": "Multi-step Record Sale flow with product list dynamically fetched from useStockLevels instead of a hardcoded array, with loading state and empty-state message.",
   "frontend/src/pages/ViewInventory.tsx": "Password-protected inventory view using useStockLevels to display all products dynamically (no hardcoded list), with color-coded stock status, total count, and refresh button.",
   "frontend/src/pages/DailySalesReport.tsx": "Password-protected daily sales report showing per-product rows with quantity sold, selling price, purchase price, revenue, and profit; summary section with total quantity, total revenue, and total profit; WhatsApp Z-report share button with enriched profit data.",
-  "frontend/src/pages/ResetInventory.tsx": "Password-protected admin reset page that now shows an informational message that the reset functionality is not available in the current backend version, with a back-to-home button.",
+  "frontend/src/pages/ResetInventory.tsx": "Password-protected admin reset page that now calls the backend `resetInventory` function with a two-step confirmation flow, inline loading spinner, Azerbaijani success/error messages, and no longer shows the placeholder \"not available\" notice.",
   "frontend/src/App.tsx": "TanStack Router setup with root layout and routes for all 8 pages including the new /product-management route rendering the ProductManagement component.",
   "frontend/index.html": "HTML entry point with Azerbaijani lang attribute, updated viewport meta tag for mobile (maximum-scale=5, user-scalable=yes), and Azerbaijani page title.",
   "frontend/src/pages/SalesHistory.tsx": "Password-protected Sales History page with product filter dynamically populated from useStockLevels and date filter, showing filtered sale records with totals.",

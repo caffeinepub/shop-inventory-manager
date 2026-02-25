@@ -182,3 +182,26 @@ export function useDeleteProduct() {
     },
   });
 }
+
+// ─── Reset Inventory ──────────────────────────────────────────────────────────
+
+export function useResetInventory() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async () => {
+      if (!actor) throw new Error('Actor hazır deyil');
+      const result = await actor.resetInventory();
+      if (!result) {
+        throw new Error('Anbarı sıfırlamaq mümkün olmadı.');
+      }
+      return result;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['stockLevels'] });
+      queryClient.invalidateQueries({ queryKey: ['salesHistory'] });
+      queryClient.invalidateQueries({ queryKey: ['zReport'] });
+    },
+  });
+}

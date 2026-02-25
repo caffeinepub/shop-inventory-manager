@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 11,
+  "projectStateVersion": 13,
   "summary": "A simple, mobile-first inventory management web app for a small shop (POS-style), targeting Android and iOS. UI is fully in Azerbaijani language. Features predefined cigarette products (Marlboro Silver, Marlboro Gold, Parliament Silver, Parliament Platinium, Parliament Superslim), add stock flow, record sale flow, password-protected inventory view and daily sales report, admin reset, and persistent local storage. Inventory view shows live remaining stock quantities. UI is button-based with minimal typing, dark/light modern style. Daily sales report now shows quantity sold per product, selling price, profit (sell - buy price), total daily revenue, total daily profit, and total quantity sold. A product management section allows adding custom products, which persist in all menus, and deleting products to remove them from inventory and menus.",
   "architectural_notes": [
     "Mobile-first, button-based UI with minimal typing — large tap targets suitable for shop workers",
@@ -15,7 +15,8 @@
     "Add Stock flow throws an error when attempting to add stock",
     "Stock quantities display as 0 instead of actual values",
     "Record Sale flow throws an error when attempting to record a sale",
-    "Daily sales report does not show selling price, profit per product, total daily profit, or total quantity sold"
+    "Daily sales report does not show selling price, profit per product, total daily profit, or total quantity sold",
+    "Admin Reset (Anbarı Sıfırla) shows 'Bu funksiya hal-hazırda mövcud deyil' error after correct password entry — reset function not connected or not implemented"
   ],
   "isFixRequest": true,
   "existing_features": [
@@ -192,6 +193,22 @@
       "title": "Ensure the AddStock, RecordSale, ViewInventory, SalesHistory, and DailySalesReport pages dynamically fetch the current product list (via getStockLevels) and render product selection buttons for all products currently in stable storage — including newly added products and excluding deleted ones. Remove any hardcoded product name arrays from these pages.",
       "reqIds": [
         "REQ-32"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-resetinventory-tsx-to-remove-the-feature-not-implemented-placeholder-and-instead-call-the-backend-resetinventory-function-after-the-user-passes-the-password-gate-and-confirms-the-reset-dialog-show-a-success-message-in-azerbaijani-on-completion-and-an-error-message-if-the-call-fails",
+      "title": "Update ResetInventory.tsx to remove the 'feature not implemented' placeholder and instead call the backend resetInventory function after the user passes the password gate and confirms the reset dialog. Show a success message in Azerbaijani on completion and an error message if the call fails.",
+      "reqIds": [
+        "REQ-35"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-useresetinventory-mutation-hook-in-usequeries-ts-that-calls-the-backend-resetinventory-function-on-success-invalidate-the-stocklevels-saleshistory-and-zreport-queries-so-all-screens-reflect-the-updated-zeroed-state",
+      "title": "Add a useResetInventory mutation hook in useQueries.ts that calls the backend resetInventory function. On success, invalidate the stockLevels, salesHistory, and zReport queries so all screens reflect the updated (zeroed) state.",
+      "reqIds": [
+        "REQ-36"
       ],
       "version": 1
     }
@@ -372,6 +389,20 @@
       "summary": "Generate a migration module (migration.mo) that preserves all existing stable data (products map and sales list) when upgrading the canister to the new version that adds the addProduct and deleteProduct functions.",
       "reqIds": [
         "REQ-33"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-39",
+      "summary": "Fix Admin Reset (Anbarı Sıfırla) function — currently shows 'Bu funksiya hal-hazırda mövcud deyil' error after password entry; the reset backend call is not wired up or the function is missing/not implemented",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-40",
+      "summary": "Implement a resetInventory function in the Motoko backend actor that sets all product stock quantities to zero and persists the change in stable storage. The function must return a success result.",
+      "reqIds": [
+        "REQ-34"
       ],
       "status": "pending"
     }

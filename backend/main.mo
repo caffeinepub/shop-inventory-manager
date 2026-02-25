@@ -227,4 +227,17 @@ actor {
       case (null) { false };
     };
   };
+
+  public shared ({ caller }) func resetInventory() : async Bool {
+    for (name in products.keys()) {
+      switch (products.get(name)) {
+        case (?product) {
+          let updatedProduct = { product with quantity = 0 };
+          products.add(name, updatedProduct);
+        };
+        case (null) {};
+      };
+    };
+    true;
+  };
 };

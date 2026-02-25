@@ -112,6 +112,7 @@ export interface backendInterface {
     getStockLevels(): Promise<Array<[string, bigint]>>;
     getZReport(): Promise<ZReport>;
     recordSale(productName: string, quantitySold: bigint, sellingPrice: number, timestamp: Time): Promise<boolean>;
+    resetInventory(): Promise<boolean>;
 }
 export class Backend implements backendInterface {
     constructor(private actor: ActorSubclass<_SERVICE>, private _uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, private _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, private processError?: (error: unknown) => never){}
@@ -210,6 +211,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.recordSale(arg0, arg1, arg2, arg3);
+            return result;
+        }
+    }
+    async resetInventory(): Promise<boolean> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.resetInventory();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.resetInventory();
             return result;
         }
     }
