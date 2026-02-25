@@ -1,0 +1,160 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 3,
+  "summary": "A simple, mobile-first inventory management web app for a small shop (POS-style). Features predefined cigarette products (Marlboro Silver, Marlboro Gold, Parliament Silver, Parliament Platinium, Parliament Superslim), add stock flow, record sale flow, password-protected inventory view and daily sales report, admin reset, and persistent local storage. UI is button-based with minimal typing, dark/light modern style.",
+  "architectural_notes": [
+    "Mobile-first, button-based UI with minimal typing — large tap targets suitable for shop workers",
+    "Predefined products: Marlboro Silver, Marlboro Gold, Parliament Silver, Parliament Platinium, Parliament Superslim",
+    "Single shared password 'gulserxan' for Inventory View, Daily Sales Report, and Admin Reset",
+    "Persistent storage via localStorage or lightweight backend; data must survive restarts"
+  ],
+  "known_issues": [],
+  "isFixRequest": false,
+  "imageRequirements": "## Required Images\n- Shop/retail app logo icon — a simple stylized cash register or shop bag silhouette on a dark background, warm amber accent (shop-logo.dim_256x256.png)",
+  "existing_features": [
+    {
+      "id": "feature-build-the-main-dashboard-home-screen-with-5-large-tappable-buttons-add-stock-record-sale-view-inventory-daily-sales-report-reset-inventory-the-dashboard-must-be-mobile-first-with-full-width-buttons-easy-to-tap-with-a-thumb",
+      "title": "Build the main dashboard home screen with 5 large, tappable buttons: Add Stock, Record Sale, View Inventory, Daily Sales Report, Reset Inventory. The dashboard must be mobile-first with full-width buttons easy to tap with a thumb.",
+      "reqIds": [
+        "REQ-6"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-build-the-add-stock-flow-screen-step-1-select-product-using-large-buttons-one-per-product-step-2-select-quantity-using-buttons-10-20-50-step-3-select-purchase-price-using-buttons-0-50-0-60-0-70-plus-a-manual-numeric-input-field-step-4-confirm-to-submit-show-a-success-confirmation-after-update",
+      "title": "Build the Add Stock flow screen: Step 1 — select product using large buttons (one per product). Step 2 — select quantity using buttons: +10, +20, +50. Step 3 — select purchase price using buttons: 0.50, 0.60, 0.70, plus a manual numeric input field. Step 4 — confirm to submit. Show a success confirmation after update.",
+      "reqIds": [
+        "REQ-7"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-build-the-record-sale-flow-screen-step-1-select-product-using-large-buttons-step-2-select-quantity-using-buttons-1-2-5-10-step-3-select-selling-price-using-buttons-9-azn-10-azn-11-azn-12-azn-step-4-confirm-to-submit-display-an-error-if-stock-is-insufficient-show-success-confirmation-on-completion",
+      "title": "Build the Record Sale flow screen: Step 1 — select product using large buttons. Step 2 — select quantity using buttons: -1, -2, -5, -10. Step 3 — select selling price using buttons: 9 AZN, 10 AZN, 11 AZN, 12 AZN. Step 4 — confirm to submit. Display an error if stock is insufficient. Show success confirmation on completion.",
+      "reqIds": [
+        "REQ-8"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-build-the-password-protected-inventory-view-screen-when-the-user-taps-view-inventory-on-the-dashboard-show-a-password-entry-prompt-if-the-password-matches-gulserxan-display-a-clean-list-of-all-5-products-with-their-current-stock-quantity-show-an-error-for-wrong-password",
+      "title": "Build the password-protected Inventory View screen. When the user taps 'View Inventory' on the dashboard, show a password entry prompt. If the password matches 'gulserxan', display a clean list of all 5 products with their current stock quantity. Show an error for wrong password.",
+      "reqIds": [
+        "REQ-9"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-build-the-password-protected-daily-sales-report-screen-when-the-user-taps-daily-sales-report-show-a-password-prompt-if-the-password-matches-gulserxan-display-today-s-sales-summary-list-of-products-sold-today-total-quantity-sold-per-product-and-total-revenue-for-today",
+      "title": "Build the password-protected Daily Sales Report screen. When the user taps 'Daily Sales Report', show a password prompt. If the password matches 'gulserxan', display today's sales summary: list of products sold today, total quantity sold per product, and total revenue for today.",
+      "reqIds": [
+        "REQ-10"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-build-the-admin-reset-flow-when-the-user-taps-reset-inventory-show-a-password-prompt-if-the-password-matches-gulserxan-show-a-confirmation-dialog-warning-that-all-stock-will-be-set-to-zero-on-confirmation-call-the-backend-reset-function-and-show-a-success-message",
+      "title": "Build the Admin Reset flow. When the user taps 'Reset Inventory', show a password prompt. If the password matches 'gulserxan', show a confirmation dialog warning that all stock will be set to zero. On confirmation, call the backend reset function and show a success message.",
+      "reqIds": [
+        "REQ-11"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-apply-a-clean-modern-dark-themed-visual-design-across-all-screens-use-a-dark-background-near-black-or-very-dark-gray-with-high-contrast-white-or-light-gray-text-accent-color-should-be-a-warm-amber-orange-tone-to-evoke-a-shop-retail-feel-all-buttons-must-be-large-with-generous-padding-and-rounded-corners-typography-must-be-large-and-legible-the-layout-must-be-mobile-first-single-column-full-width-elements-with-a-consistent-header-showing-the-app-name-and-a-back-button-on-sub-screens",
+      "title": "Apply a clean, modern dark-themed visual design across all screens. Use a dark background (near-black or very dark gray) with high-contrast white or light-gray text. Accent color should be a warm amber/orange tone to evoke a shop/retail feel. All buttons must be large, with generous padding and rounded corners. Typography must be large and legible. The layout must be mobile-first (single-column, full-width elements) with a consistent header showing the app name and a back button on sub-screens.",
+      "reqIds": [
+        "REQ-12"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "Dashboard with large buttons: Add Stock, Record Sale, View Inventory, Daily Sales Report, Reset Inventory",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-2",
+      "summary": "Add Stock flow: select product, quantity (+10/+20/+50), purchase price (0.50/0.60/0.70 + manual input)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-3",
+      "summary": "Record Sale flow: select product, quantity (-1/-2/-5/-10), selling price (9/10/11/12 AZN), stock validation, save sale record",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-4",
+      "summary": "Password-protected Inventory View showing product list with remaining quantities (password: gulserxan)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-5",
+      "summary": "Password-protected Daily Sales Report showing products sold today, total qty per product, total revenue (password: gulserxan)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-6",
+      "summary": "Admin Reset to zero all stock quantities (password: gulserxan)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-7",
+      "summary": "Persistent data storage (localStorage or lightweight backend) surviving app restarts",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-8",
+      "summary": "Define 5 predefined products in the backend: Marlboro Silver, Marlboro Gold, Parliament Silver, Parliament Platinium, Parliament Superslim. Each product must store: name, quantity in stock (integer), and last purchase price (float). Persist all data in stable storage so it survives canister restarts.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-9",
+      "summary": "Implement an Add Stock backend function: accepts product name, quantity to add (+10, +20, +50, or any positive integer), and purchase price. Increments the product's stock quantity and updates its last purchase price.",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-10",
+      "summary": "Implement a Record Sale backend function: accepts product name, quantity sold, selling price (AZN), and timestamp. Decreases product stock by the given quantity and saves a sale record (date, product, quantity, selling price). Reject the sale if stock is insufficient.",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-11",
+      "summary": "Implement a backend query to return all sale records from the current calendar day (today), grouped by product: total quantity sold per product and total revenue for today.",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-12",
+      "summary": "Implement an Admin Reset backend function: resets all product stock quantities to zero. This function must be callable only after password validation on the frontend (password: gulserxan).",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "status": "pending"
+    }
+  ],
+  "gameProjectType": "none",
+  "projectName": "Shop Inventory Manager",
+  "clarification_mode": "instant",
+  "clarification_rounds": 0
+}

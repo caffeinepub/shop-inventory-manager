@@ -1,0 +1,295 @@
+{
+  "kind": "build_request",
+  "title": "Simple Shop Inventory Management POS App",
+  "projectName": "Shop Inventory POS",
+  "priority": "normal",
+  "requirements": [
+    {
+      "id": "REQ-1",
+      "text": "Define 5 predefined products in the backend: Marlboro Silver, Marlboro Gold, Parliament Silver, Parliament Platinium, Parliament Superslim. Each product must store: name, quantity in stock (integer), and last purchase price (float). Persist all data in stable storage so it survives canister restarts.",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "Predefined products",
+          "Each product must store: Quantity in stock, Purchase price (last entered)",
+          "Data must survive app restarts"
+        ]
+      },
+      "acceptanceCriteria": [
+        "All 5 products exist in initial state with quantity 0",
+        "Product stock quantity and purchase price are persisted across restarts",
+        "Backend exposes query to list all products with their current stock and last purchase price"
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "text": "Implement an Add Stock backend function: accepts product name, quantity to add (+10, +20, +50, or any positive integer), and purchase price. Increments the product's stock quantity and updates its last purchase price.",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "ADD STOCK FLOW",
+          "Select quantity buttons: +10, +20, +50",
+          "Select purchase price: buttons (0.50, 0.60, 0.70) + manual input option",
+          "Update inventory automatically"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Calling add stock with product name, quantity, and price increases that product's stock by the given quantity",
+        "The product's last purchase price is updated to the provided price",
+        "Returns an error if the product name is invalid"
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "text": "Implement a Record Sale backend function: accepts product name, quantity sold, selling price (AZN), and timestamp. Decreases product stock by the given quantity and saves a sale record (date, product, quantity, selling price). Reject the sale if stock is insufficient.",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "RECORD SALE FLOW",
+          "Automatically decrease stock",
+          "Prevent sales if stock is insufficient",
+          "Save sale record with: date, product, quantity, selling price"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Sale is recorded and stock decremented when sufficient stock is available",
+        "Sale is rejected with an error message when stock would go below zero",
+        "Each sale record stores: date/time, product name, quantity, selling price",
+        "Sale records are persisted across restarts"
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "text": "Implement a backend query to return all sale records from the current calendar day (today), grouped by product: total quantity sold per product and total revenue for today.",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "DAILY SALES REPORT",
+          "Products sold today",
+          "Total quantity sold per product",
+          "Total revenue for today"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Returns only sale records with today's date",
+        "Aggregates total quantity sold and total revenue per product for today",
+        "Returns zero/empty when no sales have been made today"
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "text": "Implement an Admin Reset backend function: resets all product stock quantities to zero. This function must be callable only after password validation on the frontend (password: gulserxan).",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "ADMIN RESET",
+          "Admin password: gulserxan",
+          "Reset all stock quantities to zero"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Calling reset sets all 5 products' stock quantity to 0",
+        "Sale records are not affected by reset",
+        "Reset is triggered from the frontend only after correct password entry"
+      ]
+    },
+    {
+      "id": "REQ-6",
+      "text": "Build the main dashboard home screen with 5 large, tappable buttons: Add Stock, Record Sale, View Inventory, Daily Sales Report, Reset Inventory. The dashboard must be mobile-first with full-width buttons easy to tap with a thumb.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "MAIN DASHBOARD (HOME SCREEN)",
+          "Show large buttons: Add Stock, Record Sale, View Inventory (password protected), Daily Sales Report (password protected), Reset Inventory (admin only)"
+        ]
+      },
+      "acceptanceCriteria": [
+        "All 5 buttons are visible on the home screen",
+        "Buttons are large enough for easy thumb-tap on a mobile screen",
+        "Tapping each button navigates to the correct flow or triggers password prompt where required"
+      ]
+    },
+    {
+      "id": "REQ-7",
+      "text": "Build the Add Stock flow screen: Step 1 — select product using large buttons (one per product). Step 2 — select quantity using buttons: +10, +20, +50. Step 3 — select purchase price using buttons: 0.50, 0.60, 0.70, plus a manual numeric input field. Step 4 — confirm to submit. Show a success confirmation after update.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "ADD STOCK FLOW",
+          "Select product (buttons)",
+          "Select quantity buttons: +10, +20, +50",
+          "Select purchase price: buttons (0.50, 0.60, 0.70) + manual input option"
+        ]
+      },
+      "acceptanceCriteria": [
+        "User can complete the full add stock flow using only button taps (except optional manual price input)",
+        "All 5 products appear as selectable buttons",
+        "Quantity buttons show +10, +20, +50",
+        "Price buttons show 0.50, 0.60, 0.70 with an additional manual input field",
+        "Submitting calls the backend add stock function and shows a success message",
+        "User can navigate back to home after completion"
+      ]
+    },
+    {
+      "id": "REQ-8",
+      "text": "Build the Record Sale flow screen: Step 1 — select product using large buttons. Step 2 — select quantity using buttons: -1, -2, -5, -10. Step 3 — select selling price using buttons: 9 AZN, 10 AZN, 11 AZN, 12 AZN. Step 4 — confirm to submit. Display an error if stock is insufficient. Show success confirmation on completion.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "RECORD SALE FLOW",
+          "Select product (buttons)",
+          "Select quantity buttons: -1, -2, -5, -10",
+          "Select selling price buttons: 9 AZN, 10 AZN, 11 AZN, 12 AZN",
+          "Prevent sales if stock is insufficient"
+        ]
+      },
+      "acceptanceCriteria": [
+        "User can complete the full sale flow using only button taps",
+        "All 5 products appear as selectable buttons",
+        "Quantity buttons show -1, -2, -5, -10",
+        "Selling price buttons show 9 AZN, 10 AZN, 11 AZN, 12 AZN",
+        "If stock is insufficient, display a clear error message and do not submit",
+        "Successful sale shows a confirmation message and returns to home"
+      ]
+    },
+    {
+      "id": "REQ-9",
+      "text": "Build the password-protected Inventory View screen. When the user taps 'View Inventory' on the dashboard, show a password entry prompt. If the password matches 'gulserxan', display a clean list of all 5 products with their current stock quantity. Show an error for wrong password.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "INVENTORY VIEW (PASSWORD PROTECTED)",
+          "Password: gulserxan",
+          "Show product list with remaining quantity"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Password prompt appears before showing inventory",
+        "Correct password (gulserxan) grants access to the inventory list",
+        "Inventory shows all 5 products with their current stock quantities",
+        "Wrong password shows an error and does not reveal inventory",
+        "Password is validated client-side"
+      ]
+    },
+    {
+      "id": "REQ-10",
+      "text": "Build the password-protected Daily Sales Report screen. When the user taps 'Daily Sales Report', show a password prompt. If the password matches 'gulserxan', display today's sales summary: list of products sold today, total quantity sold per product, and total revenue for today.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "DAILY SALES REPORT (PASSWORD PROTECTED)",
+          "Password: gulserxan",
+          "Products sold today",
+          "Total quantity sold per product",
+          "Total revenue for today"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Password prompt appears before showing the report",
+        "Correct password grants access to the daily report",
+        "Report shows each product sold today with quantity sold and revenue",
+        "Total revenue for the day is displayed",
+        "If no sales today, shows a clear 'No sales today' message",
+        "Wrong password shows an error"
+      ]
+    },
+    {
+      "id": "REQ-11",
+      "text": "Build the Admin Reset flow. When the user taps 'Reset Inventory', show a password prompt. If the password matches 'gulserxan', show a confirmation dialog warning that all stock will be set to zero. On confirmation, call the backend reset function and show a success message.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "ADMIN RESET",
+          "Admin password: gulserxan",
+          "Reset all stock quantities to zero"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Password prompt appears before showing reset option",
+        "Correct password reveals a confirmation dialog with a clear warning",
+        "User must confirm before the reset is executed",
+        "After reset, all product stock quantities show as 0",
+        "Wrong password shows an error and does not reset"
+      ]
+    },
+    {
+      "id": "REQ-12",
+      "text": "Apply a clean, modern dark-themed visual design across all screens. Use a dark background (near-black or very dark gray) with high-contrast white or light-gray text. Accent color should be a warm amber/orange tone to evoke a shop/retail feel. All buttons must be large, with generous padding and rounded corners. Typography must be large and legible. The layout must be mobile-first (single-column, full-width elements) with a consistent header showing the app name and a back button on sub-screens.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ],
+        "quotes": [
+          "Dark/light clean modern style",
+          "Large buttons",
+          "Mobile-first design",
+          "Suitable for shop workers with no technical knowledge",
+          "Very simple and fast"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Dark theme is applied consistently across all screens",
+        "Buttons have large tap targets (minimum 48px height) with rounded corners",
+        "Amber/orange accent color is used for primary action buttons",
+        "Font size is large and readable on small mobile screens",
+        "All screens use a single-column mobile-first layout",
+        "Sub-screens have a back button to return to the dashboard"
+      ]
+    }
+  ],
+  "constraints": [
+    "Password validation must use the exact string 'gulserxan' as specified",
+    "The 5 predefined products must be fixed and not user-editable",
+    "All data (stock levels, sale records) must be persisted in the backend stable storage, not only in browser localStorage",
+    "Stock must never go below zero — reject any sale that would do so"
+  ],
+  "nonGoals": [
+    "User account management or multi-user roles",
+    "Historical sales reports beyond today",
+    "Product creation, deletion, or renaming by users",
+    "Barcode scanning or hardware POS integration",
+    "Internet Identity or any authentication system beyond the hardcoded password",
+    "Multi-currency support (only AZN selling price and numeric purchase price needed)",
+    "Telegram bot interface"
+  ],
+  "imageRequirements": {
+    "required": [
+      "Shop/retail app logo icon — a simple stylized cash register or shop bag silhouette on a dark background, warm amber accent (shop-logo.dim_256x256.png)"
+    ],
+    "edits": []
+  }
+}

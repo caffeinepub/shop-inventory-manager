@@ -1,0 +1,84 @@
+{
+  "kind": "spec_vs_diff_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-25T20:45:43.424Z",
+  "summary": "The implementation covers most requirements well, including the backend actor with 5 predefined products, add stock, record sale, today's sales, and reset functions. The frontend has all 6 screens with password gates, dark theme, amber accents, and mobile-first layout. However, there are notable gaps: the backend does not expose a getProducts query (explicitly acknowledged in ViewInventory.tsx as a backend gap), so the View Inventory screen cannot show actual stock quantities. The backend also uses non-stable heap collections which may not survive canister restarts. Additionally, the requested shop-logo image asset is missing.",
+  "missing_requirements": [
+    {
+      "id": "REQ-1",
+      "requirement": "Backend exposes query to list all products with their current stock and last purchase price",
+      "reason": "The backend (main.mo) does not implement a getProducts or getAllProducts query function. The ViewInventory.tsx frontend explicitly notes this gap and falls back to showing product names only with dashes for stock quantities.",
+      "evidence": [
+        "backend/main.mo",
+        "frontend/src/pages/ViewInventory.tsx"
+      ]
+    },
+    {
+      "id": "REQ-1",
+      "requirement": "Product stock quantity and purchase price are persisted across restarts via stable storage",
+      "reason": "The backend uses let products = Map.fromIter and let sales = List.empty which are heap-allocated mutable collections, not declared as stable var. These will not survive canister upgrades or restarts.",
+      "evidence": [
+        "backend/main.mo"
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "requirement": "Sale records are persisted across restarts",
+      "reason": "The sales list is let sales = List.empty() which is heap-allocated and not stable storage. It will be lost on canister upgrade or restart.",
+      "evidence": [
+        "backend/main.mo"
+      ]
+    },
+    {
+      "id": "REQ-9",
+      "requirement": "Inventory shows all 5 products with their current stock quantities",
+      "reason": "The ViewInventory page cannot show actual stock quantities because the backend does not expose a getProducts query. It shows a dash for all stock values and displays a warning banner about this limitation.",
+      "evidence": [
+        "frontend/src/pages/ViewInventory.tsx"
+      ]
+    }
+  ],
+  "hallucinated_features": [
+    {
+      "description": "Internet Identity and AuthClient integration with login/logout flow and identity-based actor creation",
+      "reason": "The build request explicitly lists Internet Identity or any authentication system beyond the hardcoded password as a non-goal, yet the codebase includes a full InternetIdentityProvider, AuthClient setup, useInternetIdentity hook, and identity-aware actor creation.",
+      "evidence": [
+        "frontend/src/hooks/useInternetIdentity.ts",
+        "frontend/src/hooks/useActor.ts",
+        "frontend/src/main.tsx"
+      ]
+    },
+    {
+      "description": "caffeine.ai attribution footer displayed on every screen",
+      "reason": "The build request did not request any footer or attribution link. A persistent footer with a caffeine.ai link was added to every page via the Layout component.",
+      "evidence": [
+        "frontend/src/components/Layout.tsx"
+      ]
+    }
+  ],
+  "confidence": 0.82,
+  "changed_files": [
+    "all_files_summary.json",
+    "backend/main.mo",
+    "frontend-file-summaries.txt",
+    "frontend/index.css",
+    "frontend/index.html",
+    "frontend/src/App.tsx",
+    "frontend/src/components/Header.tsx",
+    "frontend/src/components/Layout.tsx",
+    "frontend/src/components/PasswordGate.tsx",
+    "frontend/src/hooks/useActor.ts",
+    "frontend/src/hooks/useInternetIdentity.ts",
+    "frontend/src/hooks/useQueries.ts",
+    "frontend/src/index.css",
+    "frontend/src/main.tsx",
+    "frontend/src/pages/AddStock.tsx",
+    "frontend/src/pages/DailySalesReport.tsx",
+    "frontend/src/pages/Dashboard.tsx",
+    "frontend/src/pages/RecordSale.tsx",
+    "frontend/src/pages/ResetInventory.tsx",
+    "frontend/src/pages/ViewInventory.tsx",
+    "frontend/tailwind.config.js",
+    "project_state.json"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "frontend/src/index.css": "Global styles with OKLCH dark/light theme tokens, amber/orange accent color system, Inter + Space Grotesk fonts, and utility classes for large tap-target buttons and card surfaces.",
+  "frontend/tailwind.config.js": "Tailwind config extending theme with custom font families (Inter, Space Grotesk), OKLCH color tokens, larger border radii, amber glow shadow, and fade-in animation.",
+  "frontend/src/hooks/useQueries.ts": "React Query hooks for all backend operations: addStock, recordSale, getTodaySales, and resetStocks mutations/queries with cache invalidation.",
+  "frontend/src/components/Header.tsx": "Sticky app header showing the shop logo icon and app name, with a back-arrow button on sub-pages using TanStack Router navigation.",
+  "frontend/src/components/Layout.tsx": "Full-page layout wrapper composing Header, main content area (max-width centered), and footer with caffeine.ai attribution and dynamic year.",
+  "frontend/src/components/PasswordGate.tsx": "Reusable password prompt component with show/hide toggle, client-side validation against 'gulserxan', and error feedback.",
+  "frontend/src/pages/Dashboard.tsx": "Home screen with 5 large tap-target navigation buttons (Add Stock, Record Sale, View Inventory, Daily Sales Report, Reset Inventory) with icons and descriptions.",
+  "frontend/src/pages/AddStock.tsx": "Multi-step Add Stock flow: product selection → quantity (+10/+20/+50) → purchase price (preset buttons + manual input) → backend call → success screen.",
+  "frontend/src/pages/RecordSale.tsx": "Multi-step Record Sale flow: product selection → quantity (×1/×2/×5/×10) → selling price (9–12 AZN) → backend call with insufficient-stock error handling → success screen.",
+  "frontend/src/pages/ViewInventory.tsx": "Password-protected inventory view showing all 5 products; displays today's sold units per product (stock quantity requires backend getProducts endpoint).",
+  "frontend/src/pages/DailySalesReport.tsx": "Password-protected daily sales report showing total revenue, units sold, per-product breakdown with averages, and a 'No Sales Today' empty state. Fixed conflicting Tailwind classnames on the section heading by removing `text-foreground` and keeping only `text-muted-foreground`.",
+  "frontend/src/pages/ResetInventory.tsx": "Password-protected admin reset page with two-step confirmation dialog before calling resetStocks(), with destructive styling and success/error feedback.",
+  "frontend/src/App.tsx": "TanStack Router setup with root layout (Header + Outlet) and routes for all 6 pages: dashboard, add-stock, record-sale, view-inventory, daily-sales-report, reset-inventory."
+}

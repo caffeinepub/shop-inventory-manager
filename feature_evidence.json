@@ -1,0 +1,141 @@
+{
+  "kind": "feature_evidence_report",
+  "features": [
+    {
+      "featureId": "feature-build-the-main-dashboard-home-screen-with-5-large-tappable-buttons-add-stock-record-sale-view-inventory-daily-sales-report-reset-inventory-the-dashboard-must-be-mobile-first-with-full-width-buttons-easy-to-tap-with-a-thumb",
+      "featureTitle": "Build the main dashboard home screen with 5 large, tappable buttons: Add Stock, Record Sale, View Inventory, Daily Sales Report, Reset Inventory. The dashboard must be mobile-first with full-width buttons easy to tap with a thumb.",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/pages/Dashboard.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-6"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-build-the-add-stock-flow-screen-step-1-select-product-using-large-buttons-one-per-product-step-2-select-quantity-using-buttons-10-20-50-step-3-select-purchase-price-using-buttons-0-50-0-60-0-70-plus-a-manual-numeric-input-field-step-4-confirm-to-submit-show-a-success-confirmation-after-update",
+      "featureTitle": "Build the Add Stock flow screen: Step 1 — select product using large buttons (one per product). Step 2 — select quantity using buttons: +10, +20, +50. Step 3 — select purchase price using buttons: 0.50, 0.60, 0.70, plus a manual numeric input field. Step 4 — confirm to submit. Show a success confirmation after update.",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/pages/AddStock.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-7"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-build-the-record-sale-flow-screen-step-1-select-product-using-large-buttons-step-2-select-quantity-using-buttons-1-2-5-10-step-3-select-selling-price-using-buttons-9-azn-10-azn-11-azn-12-azn-step-4-confirm-to-submit-display-an-error-if-stock-is-insufficient-show-success-confirmation-on-completion",
+      "featureTitle": "Build the Record Sale flow screen: Step 1 — select product using large buttons. Step 2 — select quantity using buttons: -1, -2, -5, -10. Step 3 — select selling price using buttons: 9 AZN, 10 AZN, 11 AZN, 12 AZN. Step 4 — confirm to submit. Display an error if stock is insufficient. Show success confirmation on completion.",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/pages/RecordSale.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-8"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-build-the-password-protected-inventory-view-screen-when-the-user-taps-view-inventory-on-the-dashboard-show-a-password-entry-prompt-if-the-password-matches-gulserxan-display-a-clean-list-of-all-5-products-with-their-current-stock-quantity-show-an-error-for-wrong-password",
+      "featureTitle": "Build the password-protected Inventory View screen. When the user taps 'View Inventory' on the dashboard, show a password entry prompt. If the password matches 'gulserxan', display a clean list of all 5 products with their current stock quantity. Show an error for wrong password.",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/pages/ViewInventory.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-9"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-build-the-password-protected-daily-sales-report-screen-when-the-user-taps-daily-sales-report-show-a-password-prompt-if-the-password-matches-gulserxan-display-today-s-sales-summary-list-of-products-sold-today-total-quantity-sold-per-product-and-total-revenue-for-today",
+      "featureTitle": "Build the password-protected Daily Sales Report screen. When the user taps 'Daily Sales Report', show a password prompt. If the password matches 'gulserxan', display today's sales summary: list of products sold today, total quantity sold per product, and total revenue for today.",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/pages/DailySalesReport.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-10"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-build-the-admin-reset-flow-when-the-user-taps-reset-inventory-show-a-password-prompt-if-the-password-matches-gulserxan-show-a-confirmation-dialog-warning-that-all-stock-will-be-set-to-zero-on-confirmation-call-the-backend-reset-function-and-show-a-success-message",
+      "featureTitle": "Build the Admin Reset flow. When the user taps 'Reset Inventory', show a password prompt. If the password matches 'gulserxan', show a confirmation dialog warning that all stock will be set to zero. On confirmation, call the backend reset function and show a success message.",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/pages/ResetInventory.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-11"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-apply-a-clean-modern-dark-themed-visual-design-across-all-screens-use-a-dark-background-near-black-or-very-dark-gray-with-high-contrast-white-or-light-gray-text-accent-color-should-be-a-warm-amber-orange-tone-to-evoke-a-shop-retail-feel-all-buttons-must-be-large-with-generous-padding-and-rounded-corners-typography-must-be-large-and-legible-the-layout-must-be-mobile-first-single-column-full-width-elements-with-a-consistent-header-showing-the-app-name-and-a-back-button-on-sub-screens",
+      "featureTitle": "Apply a clean, modern dark-themed visual design across all screens. Use a dark background (near-black or very dark gray) with high-contrast white or light-gray text. Accent color should be a warm amber/orange tone to evoke a shop/retail feel. All buttons must be large, with generous padding and rounded corners. Typography must be large and legible. The layout must be mobile-first (single-column, full-width elements) with a consistent header showing the app name and a back button on sub-screens.",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/components/Header.tsx",
+        "frontend/src/components/Layout.tsx",
+        "frontend/src/index.css",
+        "frontend/tailwind.config.js"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-12"
+      ],
+      "confidence": "high"
+    }
+  ]
+}
